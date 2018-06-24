@@ -1,1 +1,1 @@
-web: gunicorn pec_api.wsgi
+web: uwsgi uwsgi.ini
