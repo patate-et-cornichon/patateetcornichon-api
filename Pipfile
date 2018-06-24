@@ -7,6 +7,7 @@ name = "pypi"
 django = "*"
 django-heroku = "*"
 uwsgi = "*"
+djangorestframework = "*"
 
 [dev-packages]
 
