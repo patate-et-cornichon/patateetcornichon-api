@@ -8,8 +8,16 @@ django = "*"
 django-heroku = "*"
 uwsgi = "*"
 djangorestframework = "*"
+dj-database-url = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-django = "*"
+pytest-cov = "*"
+coverage = "*"
+"flake8" = "*"
+isort = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"
