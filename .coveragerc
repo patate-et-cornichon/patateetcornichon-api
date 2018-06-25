@@ -1,0 +1,12 @@
+[report]
+exclude_lines =
+    pragma: no cover
+    def __str__
+    def __repr__
+    raise NotImplementedError
+omit =
+    *migrations*
+    *tests*
+    *pec_api*
+    *manage.py*
+    *apps.py*
