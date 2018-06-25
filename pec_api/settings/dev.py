@@ -14,4 +14,4 @@ DEBUG = True
 
 # Heroku Configuration
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False, test_runner=False)

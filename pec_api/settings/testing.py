@@ -27,4 +27,4 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRend
 
 # Heroku Configuration
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False, test_runner=False)

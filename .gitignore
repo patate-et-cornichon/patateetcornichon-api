@@ -1,5 +1,5 @@
 db.sqlite3
 .idea
-/staticfiles/
 /.pytest_cache/
 /.coverage
+/static/

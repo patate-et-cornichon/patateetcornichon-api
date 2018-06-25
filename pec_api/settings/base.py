@@ -31,6 +31,9 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'rest_framework',
+
+    # Projects apps,
+    'apps.account'
 ]
 
 MIDDLEWARE = [
@@ -67,7 +70,9 @@ WSGI_APPLICATION = 'pec_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = dict.fromkeys(['engine'], dj_database_url.config(conn_max_age=600))
+DATABASES = {
+    'engine': dj_database_url.config(conn_max_age=600),
+}
 
 
 # Password validation
@@ -106,9 +111,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+
+
+# Media files
+
+MEDIA_ROOT = 'media'
+MEDIA_URL = '/media/'
 
 
 # Django Rest Framework Configuration
 
 REST_FRAMEWORK = {}
+
+
+# User configuration
+
+AUTH_USER_MODEL = 'account.User'
