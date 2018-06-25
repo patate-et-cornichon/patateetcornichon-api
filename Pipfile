@@ -9,6 +9,7 @@ django-heroku = "*"
 uwsgi = "*"
 djangorestframework = "*"
 dj-database-url = "*"
+raven = "*"
 
 [dev-packages]
 pytest = "*"

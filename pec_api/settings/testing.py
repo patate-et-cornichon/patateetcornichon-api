@@ -7,6 +7,13 @@ import django_heroku
 from .base import *  # noqa: F403
 
 
+# Application definition
+
+INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
+    'raven.contrib.django.raven_compat',
+]
+
+
 # Security configuration
 
 DEBUG = False
