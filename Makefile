@@ -54,8 +54,8 @@ isort:
 
 # Just runs all the tests!
 tests:
-	pipenv run py.test
+	pipenv run pytest
 
 # Collects code coverage data.
 coverage:
-	pipenv run py.test --cov-report term-missing --cov .
+	pipenv run pytest --cov-report term-missing --cov .
