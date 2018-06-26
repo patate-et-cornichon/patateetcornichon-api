@@ -6,12 +6,15 @@ python:
 services:
   - postgresql
 
-addons:
-  postgresql: 10
+env:
+  - DATABASE_URL=postgres://postgres:postgres@localhost:5432/travis_pec_api
 
 install:
   - pip install pipenv
   - pipenv install --dev
+
+before_script:
+  - psql -c 'create database travis_pec_api;' -U postgres
 
 script:
   - make qa
