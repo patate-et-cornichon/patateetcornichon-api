@@ -10,6 +10,8 @@ uwsgi = "*"
 djangorestframework = "*"
 dj-database-url = "*"
 raven = "*"
+django-storages = "*"
+"boto3" = "*"
 
 [dev-packages]
 pytest = "*"

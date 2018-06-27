@@ -11,6 +11,7 @@ from .base import *  # noqa: F403
 
 INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
     'raven.contrib.django.raven_compat',
+    'storages',
 ]
 
 
@@ -18,6 +19,15 @@ INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
 
 DEBUG = False
 SECURE_SSL_REDIRECT = True
+
+
+# Files configuration
+
+# See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEFAULT_FILE_STORAGE
+STATICFILES_STORAGE = 'pec_api.storage.StaticRootS3BotoStorage'
+
+# See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATICFILES_STORAGE
+DEFAULT_FILE_STORAGE = 'pec_api.storage.MediaRootS3BotoStorage'
 
 
 # Django Rest Framework Configuration
