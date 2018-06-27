@@ -8,7 +8,7 @@ from apps.account.models import User
 
 @pytest.mark.django_db
 class TestUserViewSet:
-    def test_can_create_a_user(self):
+    def test_can_create_a_new_user(self):
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
@@ -39,6 +39,19 @@ class TestUserViewSet:
         assert response.status_code == status.HTTP_200_OK
         assert user_data['email'] == response.data[0]['email']
 
+    def test_cannot_retrieve_self_user_data(self):
+        user_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        user = User.objects.create_user(**user_data)
+
+        client = APIClient()
+        client.login(username=user_data['email'], password=user_data['password'])
+        response = client.get(reverse('account:user-detail', kwargs={'pk': user.id}))
+
+        assert response.status_code == status.HTTP_200_OK
+
     def test_cannot_retrieve_all_users_when_not_logged(self):
         client = APIClient()
         response = client.get(reverse('account:user-list'))
@@ -55,5 +68,23 @@ class TestUserViewSet:
         client = APIClient()
         client.login(username=user_data['email'], password=user_data['password'])
         response = client.get(reverse('account:user-list'))
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_cannot_access_to_others_data_for_non_admin_users(self):
+        user_1_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        user_2_data = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        User.objects.create_user(**user_1_data)
+        other_user = User.objects.create_user(**user_2_data)
+
+        client = APIClient()
+        client.login(username=user_1_data['email'], password=user_1_data['password'])
+        response = client.get(reverse('account:user-detail', kwargs={'pk': other_user.id}))
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
