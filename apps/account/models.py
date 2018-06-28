@@ -21,6 +21,7 @@ class User(AbstractBaseUser, PermissionsMixin, DatedModel):
     # Extra user information
     first_name = models.CharField(max_length=40, null=True, blank=True)
     last_name = models.CharField(max_length=40, null=True, blank=True)
+    avatar = models.FileField(upload_to='avatars/', null=True)
     website = models.URLField(max_length=255, null=True, blank=True)
 
     # User permission

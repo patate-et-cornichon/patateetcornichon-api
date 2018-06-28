@@ -13,6 +13,7 @@ raven = "*"
 django-storages = "*"
 "boto3" = "*"
 djangorestframework-jwt = "*"
+requests = "*"
 
 [dev-packages]
 pytest = "*"
