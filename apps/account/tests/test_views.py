@@ -56,7 +56,7 @@ class TestUserViewSet:
         client = APIClient()
         response = client.get(reverse('account:user-list'))
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_cannot_retrieve_all_users_when_normal_user(self):
         user_data = {

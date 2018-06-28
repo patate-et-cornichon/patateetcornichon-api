@@ -3,6 +3,7 @@ Django base settings for Patate & Cornichon API project.
 """
 
 import os
+from datetime import timedelta
 
 import dj_database_url
 
@@ -123,12 +124,27 @@ MEDIA_URL = '/media/'
 
 # Django Rest Framework Configuration
 
-REST_FRAMEWORK = {}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
 
 # User configuration
 
 AUTH_USER_MODEL = 'account.User'
+
+
+# JWT Configuration
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': timedelta(hours=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+}
 
 
 # AWS Settings (via DigitalOcean)

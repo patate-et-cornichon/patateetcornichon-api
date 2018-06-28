@@ -12,6 +12,7 @@ dj-database-url = "*"
 raven = "*"
 django-storages = "*"
 "boto3" = "*"
+djangorestframework-jwt = "*"
 
 [dev-packages]
 pytest = "*"
