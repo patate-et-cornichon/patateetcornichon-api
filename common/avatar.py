@@ -35,9 +35,7 @@ def get_from_gravatar(email):
         logger.error(e, exc_info=True)
         return None
 
-    # Only we have a status 200 response, else we don't need to return any file
     if response.status_code == requests.codes.ok:
-
         # Write the file
         f = BytesIO()
         f.write(response.content)
