@@ -23,6 +23,7 @@ coverage = "*"
 "flake8" = "*"
 isort = "*"
 pylint = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.6"
