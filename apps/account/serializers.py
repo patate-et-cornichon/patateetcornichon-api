@@ -28,7 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
         # Try to get an avatar from the Gravatar service
         avatar = get_from_gravatar(email)
         if avatar is not None:
-            user.avatar.save(f'{user.id}.jpg', avatar, save=True)
+            path, file = avatar
+            user.avatar.save(path, file, save=True)
         return user
 
     @transaction.atomic

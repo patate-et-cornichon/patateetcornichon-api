@@ -1,8 +1,10 @@
 import hashlib
 import logging
+from io import BytesIO
 
 import requests
-from django.core.files.base import ContentFile
+from django.conf import settings
+from django.core.files import File
 
 
 logger = logging.getLogger(__name__)
@@ -33,8 +35,23 @@ def get_from_gravatar(email):
         logger.error(e, exc_info=True)
         return None
 
-    # Return the file if we have a status 200 response
-    if response.status_code == 200:
-        return ContentFile(response.content)
+    # Only we have a status 200 response, else we don't need to return any file
+    if response.status_code == requests.codes.ok:
+
+        # Write the file
+        f = BytesIO()
+        f.write(response.content)
+
+        # Set the avatar path
+        path = 'fetched/' + generate_avatar_name(email, '.jpg')
+        return path, File(f)
 
     return None
+
+
+def generate_avatar_name(email, ext):
+    """ Generate an avatar name thanks to the email. We securely crypt the email string
+        with a salt in order to not publicly expose it.
+     """
+    hashed_email = hashlib.sha256(f'{email}{settings.SECRET_KEY}'.encode('utf-8')).hexdigest()
+    return hashed_email[:10] + ext
