@@ -32,3 +32,6 @@ class User(AbstractBaseUser, PermissionsMixin, DatedModel):
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
+
+    def __str__(self):
+        return self.email

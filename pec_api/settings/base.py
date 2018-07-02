@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Projects apps,
-    'apps.account'
+    'apps.account',
+    'apps.recipe',
 ]
 
 MIDDLEWARE = [

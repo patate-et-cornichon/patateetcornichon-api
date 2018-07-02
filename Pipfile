@@ -14,6 +14,8 @@ django-storages = "*"
 "boto3" = "*"
 djangorestframework-jwt = "*"
 requests = "*"
+pillow = "*"
+"psycopg2-binary" = "*"
 
 [dev-packages]
 pytest = "*"
@@ -24,6 +26,8 @@ coverage = "*"
 isort = "*"
 pylint = "*"
 ipython = "*"
+factory-boy = "*"
+faker = "*"
 
 [requires]
 python_version = "3.6"
