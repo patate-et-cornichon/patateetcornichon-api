@@ -23,7 +23,7 @@ class Recipe(SlugModel, DatedModel):
 
     # We have two types of image: a recipe illustration and an optional second illustration.
     main_picture = models.ImageField(upload_to='recipes/')
-    secondary_picture = models.ImageField(upload_to='recipes/', blank=True, null=True)
+    secondary_picture = models.ImageField(upload_to='recipes/', null=True)
 
     # For how many persons ? How many items ?
     goal = models.CharField(max_length=100)

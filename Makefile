@@ -16,7 +16,7 @@ db:
 	createdb pec_api
 
 devserver:
-	pipenv run heroku local web
+	pipenv run python manage.py runserver --settings=$(DJANGO_SETTINGS_MODULE)
 
 shell:
 	pipenv run python manage.py shell --settings=$(DJANGO_SETTINGS_MODULE)
