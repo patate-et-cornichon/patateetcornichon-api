@@ -40,8 +40,8 @@ class TestRecipe:
         recipe.ingredients.add(*ingredients)
 
         # Check if the pictures name are equal
-        picture = recipe_data.pop('main_picture')
-        assert picture.name in recipe.main_picture.name
+        recipe_data.pop('main_picture')
+        assert recipe.slug in recipe.main_picture.name
 
         # Check data are well populated
         for key, value in recipe_data.items():

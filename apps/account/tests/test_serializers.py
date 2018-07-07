@@ -1,5 +1,4 @@
 import os
-import shutil
 import unittest.mock
 
 import pytest
@@ -11,21 +10,10 @@ from common.avatar import generate_avatar_name
 
 
 FIXTURE_ROOT = os.path.join(settings.BASE_DIR, '../common/tests/fixtures')
-MEDIA_ROOT = os.path.join(os.path.dirname(__file__), '.media')
 
 
 @pytest.mark.django_db
 class TestUserSerializer:
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        settings.MEDIA_ROOT = MEDIA_ROOT
-
-    @pytest.yield_fixture(scope='session', autouse=True)
-    def teardown(self):
-        yield
-        if os.path.exists(MEDIA_ROOT):
-            shutil.rmtree(MEDIA_ROOT)
-
     def test_can_create_a_new_user(self):
         user_data = {
             'email': 'test@test.com',

@@ -3,6 +3,8 @@ import uuid
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
+from apps.recipe.files import (
+    recipe_main_picture_directory_path, recipe_secondary_picture_directory_path)
 from common.db.abstract_models import DatedModel, SlugModel
 
 
@@ -22,8 +24,11 @@ class Recipe(SlugModel, DatedModel):
     full_title = models.CharField(max_length=255, unique=True)
 
     # We have two types of image: a recipe illustration and an optional second illustration.
-    main_picture = models.ImageField(upload_to='recipes/')
-    secondary_picture = models.ImageField(upload_to='recipes/', null=True)
+    main_picture = models.ImageField(upload_to=recipe_main_picture_directory_path)
+    secondary_picture = models.ImageField(
+        upload_to=recipe_secondary_picture_directory_path,
+        null=True,
+    )
 
     # For how many persons ? How many items ?
     goal = models.CharField(max_length=100)

@@ -33,14 +33,14 @@ class CategoryFactory(factory.DjangoModelFactory):
 class RecipeFactory(factory.django.DjangoModelFactory):
     """ Factory class for the ``Recipe`` model. """
 
-    slug = fake.slug()
+    slug = factory.LazyAttribute(lambda _: fake.slug())
     published = True
     title = fake.name()
     sub_title = fake.name()
-    full_title = fake.name()
-    main_image = factory.django.ImageField()
+    full_title = factory.LazyAttribute(lambda _: fake.name())
+    main_picture = factory.django.ImageField()
     goal = fake.word()
-    preparation_time = fake.random_number()
+    preparation_time = fake.random_number(digits=2)
     categories = factory.SubFactory(CategoryFactory)
     introduction = fake.text()
     ingredients = factory.SubFactory(IngredientFactory)
@@ -50,3 +50,21 @@ class RecipeFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Recipe
+
+    @factory.post_generation
+    def categories(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for category in extracted:
+                self.categories.add(category)
+
+    @factory.post_generation
+    def ingredients(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for ingredient in extracted:
+                self.ingredients.add(ingredient)
