@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 
 from apps.account.models import User
 from apps.recipe.models import Recipe
-from apps.recipe.tests.factories import RecipeFactory
+from apps.recipe.tests.factories import CategoryFactory, RecipeFactory
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -44,6 +44,9 @@ class TestRecipeViewSet:
         assert len(response.data) == 3
 
     def test_can_create_a_new_recipe_when_staff_user(self):
+        category_1 = CategoryFactory.create()
+        category_2 = CategoryFactory.create(parent=category_1)
+
         recipe_data = {
             'slug': 'super-recette',
             'title': 'Crêpes',
@@ -56,6 +59,10 @@ class TestRecipeViewSet:
             ),
             'goal': '2 pers.',
             'preparation_time': 30,
+            'categories': [
+                category_1.id,
+                category_2.id
+            ],
             'introduction': 'Hello world',
             'meta_description': 'Recettes de crêpes vegan',
             'steps': [
@@ -83,6 +90,11 @@ class TestRecipeViewSet:
         # Check if the pictures name are equal
         recipe_data.pop('main_picture')
         assert recipe.slug in recipe.main_picture.name
+
+        # Check if the categories are valid
+        recipe_data.pop('categories')
+        assert category_1 in recipe.categories.all()
+        assert category_2 in recipe.categories.all()
 
         # Check data are well populated
         for key, value in recipe_data.items():
@@ -123,3 +135,17 @@ class TestRecipeViewSet:
 
         recipe = Recipe.objects.filter(slug=recipe_data['slug']).first()
         assert recipe is None
+
+
+@pytest.mark.django_db
+class TestCategoryViewSet:
+    def test_can_access_all_categories(self):
+        category_1 = CategoryFactory.create()
+        CategoryFactory.create(parent=category_1)
+        CategoryFactory.create(parent=category_1)
+        CategoryFactory.create()
+
+        client = APIClient()
+        response = client.get(reverse('recipe:category-list'))
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 2

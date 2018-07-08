@@ -1,2 +1,2 @@
 web: uwsgi uwsgi.ini
-release: python manage.py migrate
+release: ./release-tasks.sh

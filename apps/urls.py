@@ -12,7 +12,7 @@ urlpatterns = [
 
     # Apps views
     path('users', include('apps.account.urls')),
-    path('recipes', include('apps.recipe.urls')),
+    path('junk-food', include('apps.recipe.urls')),
 
     # Auth view
     path('auth/obtain-token/', obtain_jwt_token),
