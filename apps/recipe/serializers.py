@@ -44,6 +44,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def validate_steps(self, value):
         """ At least one step is required. """
-        if not value:
+        if not value:  # pragma: no cover
             return self.fail('steps_required')
         return value

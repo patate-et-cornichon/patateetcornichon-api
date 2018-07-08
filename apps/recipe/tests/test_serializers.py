@@ -1,9 +1,11 @@
 import os
+
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe
 from apps.recipe.serializers import RecipeSerializer
+
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
 
