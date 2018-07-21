@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe
 
-from .factories import CategoryFactory, IngredientFactory
+from .factories import CategoryFactory, RecipeIngredientFactory
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -15,7 +15,7 @@ FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
 class TestRecipe:
     def test_can_create_a_recipe(self):
         categories = CategoryFactory.create_batch(2)
-        ingredients = IngredientFactory.create_batch(7)
+        ingredients = RecipeIngredientFactory.create_batch(7)
 
         recipe_data = {
             'title': 'Chocolatine',

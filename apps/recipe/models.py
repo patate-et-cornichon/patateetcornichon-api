@@ -60,7 +60,7 @@ class Recipe(SlugModel, DatedModel):
 
     # Recipe main data (introduction, ingredients, steps, etc.)
     introduction = models.TextField()
-    ingredients = models.ManyToManyField('Ingredient')
+    ingredients = models.ManyToManyField('RecipeIngredient')
     steps = ArrayField(base_field=models.TextField())
 
     # SEO fields
@@ -96,14 +96,23 @@ class Tag(SlugModel):
         return self.name
 
 
-class Ingredient(SlugModel):
+class RecipeIngredient(models.Model):
     """ An Ingredient is defined by its name, optional quantity and optional unit. """
 
-    name = models.CharField(max_length=255, unique=True, db_index=True)
+    ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(null=True, blank=True)
     unit = models.ForeignKey(
         'Unit', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
     )
+
+    def __str__(self):
+        return self.ingredient.name
+
+
+class Ingredient(SlugModel):
+    """ An Ingredient Name. """
+
+    name = models.CharField(max_length=255, unique=True, db_index=True)
 
     def __str__(self):
         return self.name

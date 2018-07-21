@@ -1,7 +1,7 @@
 import factory
 from faker import Factory
 
-from ..models import Category, Ingredient, Recipe, Tag
+from ..models import Category, Ingredient, Recipe, RecipeIngredient, Tag
 
 
 fake = Factory.create()
@@ -15,6 +15,15 @@ class IngredientFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Ingredient
+
+
+class RecipeIngredientFactory(factory.DjangoModelFactory):
+    """ Factory class for the ``RecipeIngredient`` model. """
+
+    ingredient = factory.SubFactory(IngredientFactory)
+
+    class Meta:
+        model = RecipeIngredient
 
 
 class CategoryFactory(factory.DjangoModelFactory):
@@ -51,7 +60,7 @@ class RecipeFactory(factory.django.DjangoModelFactory):
     preparation_time = fake.random_number(digits=2)
     categories = factory.SubFactory(CategoryFactory)
     introduction = fake.text()
-    ingredients = factory.SubFactory(IngredientFactory)
+    ingredients = factory.SubFactory(RecipeIngredientFactory)
     steps = [fake.text() for _ in range(3)]
 
     meta_description = fake.text()
