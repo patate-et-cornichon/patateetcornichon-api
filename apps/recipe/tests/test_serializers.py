@@ -1,4 +1,5 @@
 import os
+from base64 import b64encode
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -17,29 +18,45 @@ class TestRecipeCreateUpdateSerializer:
         category_1 = CategoryFactory.create()
         category_2 = CategoryFactory.create(parent=category_1)
 
-        recipe_data = {
-            'slug': 'super-recette',
-            'title': 'Crêpes',
-            'sub_title': 'vegan',
-            'full_title': 'Crêpes vegan au chocolat',
-            'main_picture': SimpleUploadedFile(
-                name='recipe.jpg',
-                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
-                content_type='image/jpeg',
-            ),
-            'categories': [
-                category_1.id,
-                category_2.id,
-            ],
-            'goal': '2 pers.',
-            'preparation_time': 30,
-            'introduction': 'Hello world',
-            'meta_description': 'Recettes de crêpes vegan',
-            'steps': [
-                'Ajouter la farine',
-                'Ajouter le lait végétal',
-            ],
-        }
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as main_picture:
+            recipe_data = {
+                'slug': 'super-recette',
+                'title': 'Crêpes',
+                'sub_title': 'vegan',
+                'full_title': 'Crêpes vegan au chocolat',
+                'main_picture': b64encode(main_picture.read()).decode('utf-8'),
+                'categories': [
+                    category_1.id,
+                    category_2.id,
+                ],
+                'goal': '2 pers.',
+                'preparation_time': 30,
+                'introduction': 'Hello world',
+                'ingredients': [
+                    {
+                        'ingredient': 'Eau',
+                    },
+                    {
+                        'ingredient': 'Olives',
+                        'quantity': 2,
+                    },
+                    {
+                        'ingredient': 'Patates',
+                        'unit': 'gr',
+                        'quantity': 2,
+                    },
+                    {
+                        'ingredient': 'Sucre',
+                        'unit': 'gr',
+                        'quantity': 3,
+                    },
+                ],
+                'steps': [
+                    'Ajouter la farine',
+                    'Ajouter le lait végétal',
+                ],
+                'meta_description': 'Recettes de crêpes vegan',
+            }
 
         serializer = RecipeCreateUpdateSerializer(data=recipe_data)
         assert serializer.is_valid()
@@ -58,6 +75,20 @@ class TestRecipeCreateUpdateSerializer:
         assert category_1 in recipe.categories.all()
         assert category_2 in recipe.categories.all()
 
+        # Check if the categories are valid
+        ingredients = recipe_data.pop('ingredients')
+        for ingredients_item in ingredients:
+            ingredient_name = ingredients_item['ingredient']
+            recipe_ingredient = (
+                recipe.ingredients
+                .filter(ingredient__name=ingredient_name)
+                .first()
+            )
+            assert recipe_ingredient is not None
+            assert recipe_ingredient.quantity == ingredients_item.get('quantity')
+            if recipe_ingredient.unit:
+                assert recipe_ingredient.unit.name == ingredients_item['unit']
+
         # Check data are well populated
         for key, value in recipe_data.items():
             assert getattr(recipe, key) == value
@@ -67,35 +98,43 @@ class TestRecipeCreateUpdateSerializer:
         category_2 = CategoryFactory.create(parent=category_1)
         tag = TagFactory.create()
 
-        recipe_data = {
-            'slug': 'super-recette',
-            'title': 'Crêpes',
-            'sub_title': 'vegan',
-            'full_title': 'Crêpes vegan au chocolat',
-            'main_picture': SimpleUploadedFile(
-                name='recipe.jpg',
-                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
-                content_type='image/jpeg',
-            ),
-            'categories': [
-                category_1.id,
-                category_2.id,
-            ],
-            'tags': [
-                tag.name,
-                'Food',
-                'Miam',
-            ],
-            'goal': '2 pers.',
-            'preparation_time': 30,
-            'introduction': 'Hello world',
-            'meta_description': 'Recettes de crêpes vegan',
-            'steps': [
-                'Ajouter la farine',
-                'Ajouter le lait végétal',
-            ],
-        }
-
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as main_picture:
+            recipe_data = {
+                'slug': 'super-recette',
+                'title': 'Crêpes',
+                'sub_title': 'vegan',
+                'full_title': 'Crêpes vegan au chocolat',
+                'main_picture': b64encode(main_picture.read()).decode('utf-8'),
+                'categories': [
+                    category_1.id,
+                    category_2.id,
+                ],
+                'tags': [
+                    tag.name,
+                    'Food',
+                    'Miam',
+                ],
+                'goal': '2 pers.',
+                'preparation_time': 30,
+                'introduction': 'Hello world',
+                'ingredients': [
+                    {
+                        'ingredient': 'Patates',
+                        'unit': 'gr',
+                        'quantity': 2,
+                    },
+                    {
+                        'ingredient': 'Sucre',
+                        'unit': 'gr',
+                        'quantity': 3,
+                    },
+                ],
+                'steps': [
+                    'Ajouter la farine',
+                    'Ajouter le lait végétal',
+                ],
+                'meta_description': 'Recettes de crêpes vegan',
+            }
         serializer = RecipeCreateUpdateSerializer(data=recipe_data)
         assert serializer.is_valid()
 

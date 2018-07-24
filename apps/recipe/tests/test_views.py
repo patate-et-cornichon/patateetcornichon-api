@@ -1,4 +1,6 @@
+import json
 import os
+from base64 import b64encode
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -7,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from apps.account.models import User
-from apps.recipe.models import Recipe
+from apps.recipe.models import Ingredient, Recipe
 from apps.recipe.tests.factories import CategoryFactory, RecipeFactory
 
 
@@ -47,29 +49,45 @@ class TestRecipeViewSet:
         category_1 = CategoryFactory.create()
         category_2 = CategoryFactory.create(parent=category_1)
 
-        recipe_data = {
-            'slug': 'super-recette',
-            'title': 'Crêpes',
-            'sub_title': 'vegan',
-            'full_title': 'Crêpes vegan au chocolat',
-            'main_picture': SimpleUploadedFile(
-                name='recipe.jpg',
-                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
-                content_type='image/jpeg'
-            ),
-            'goal': '2 pers.',
-            'preparation_time': 30,
-            'categories': [
-                category_1.id,
-                category_2.id
-            ],
-            'introduction': 'Hello world',
-            'meta_description': 'Recettes de crêpes vegan',
-            'steps': [
-                'Ajouter la farine',
-                'Ajouter le lait végétal',
-            ],
-        }
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as main_picture:
+            recipe_data = {
+                'slug': 'super-recette',
+                'title': 'Crêpes',
+                'sub_title': 'vegan',
+                'full_title': 'Crêpes vegan au chocolat',
+                'main_picture': b64encode(main_picture.read()).decode('utf-8'),
+                'goal': '2 pers.',
+                'preparation_time': 30,
+                'categories': [
+                    category_1.id,
+                    category_2.id
+                ],
+                'introduction': 'Hello world',
+                'ingredients': [
+                    {
+                        'ingredient': 'Eau',
+                    },
+                    {
+                        'ingredient': 'Olives',
+                        'quantity': 2,
+                    },
+                    {
+                        'ingredient': 'Patates',
+                        'unit': 'gr',
+                        'quantity': 2,
+                    },
+                    {
+                        'ingredient': 'Sucre',
+                        'unit': 'gr',
+                        'quantity': 3,
+                    },
+                ],
+                'steps': [
+                    'Ajouter la farine',
+                    'Ajouter le lait végétal',
+                ],
+                'meta_description': 'Recettes de crêpes vegan',
+            }
 
         user_data = {
             'email': 'test@test.com',
@@ -79,8 +97,11 @@ class TestRecipeViewSet:
 
         client = APIClient()
         client.login(username=user_data['email'], password=user_data['password'])
-        response = client.post(reverse('recipe:recipe-list'), recipe_data, format='multipart')
-
+        response = client.post(
+            reverse('recipe:recipe-list'),
+            data=json.dumps(recipe_data),
+            content_type='application/json',
+        )
         assert response.status_code == status.HTTP_201_CREATED
 
         recipe = Recipe.objects.filter(slug=recipe_data['slug']).first()
@@ -95,6 +116,14 @@ class TestRecipeViewSet:
         recipe_data.pop('categories')
         assert category_1 in recipe.categories.all()
         assert category_2 in recipe.categories.all()
+
+        # Check if ingredients exist
+        ingredients = recipe_data.pop('ingredients')
+        for ingredient_item in ingredients:
+            assert (
+                Ingredient.objects.filter(name=ingredient_item['ingredient']).first()
+                is not None
+            )
 
         # Check data are well populated
         for key, value in recipe_data.items():
