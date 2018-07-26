@@ -1,7 +1,7 @@
 import factory
 from faker import Factory
 
-from ..models import Category, Ingredient, Recipe, RecipeIngredient, Tag
+from ..models import Category, Ingredient, Recipe, RecipeIngredient, Tag, Unit
 
 
 fake = Factory.create()
@@ -15,6 +15,15 @@ class IngredientFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Ingredient
+
+
+class UnitFactory(factory.DjangoModelFactory):
+    """ Factory class for the ``Unit`` model. """
+
+    name = factory.LazyAttribute(lambda _: fake.name())
+
+    class Meta:
+        model = Unit
 
 
 class RecipeIngredientFactory(factory.DjangoModelFactory):

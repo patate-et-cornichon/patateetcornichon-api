@@ -5,8 +5,9 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe
-from apps.recipe.serializers import RecipeCreateUpdateSerializer
-from apps.recipe.tests.factories import CategoryFactory, TagFactory
+from apps.recipe.serializers import RecipeCreateUpdateSerializer, RecipeIngredientSerializer
+from apps.recipe.tests.factories import (
+    CategoryFactory, RecipeIngredientFactory, TagFactory, UnitFactory)
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -146,6 +147,13 @@ class TestRecipeCreateUpdateSerializer:
         assert recipe.tags.filter(id=tag.id).first() is not None
         assert recipe_data['tags'][1] in list(recipe.tags.values_list('name', flat=True))
         assert recipe_data['tags'][2] in list(recipe.tags.values_list('name', flat=True))
+
+    def test_can_returns_ingredients_information(self):
+        unit = UnitFactory.create()
+        recipe_ingredient = RecipeIngredientFactory.create(unit=unit)
+        serializer = RecipeIngredientSerializer()
+        assert serializer.get_ingredient(recipe_ingredient) == recipe_ingredient.ingredient.name
+        assert serializer.get_unit(recipe_ingredient) == recipe_ingredient.unit.name
 
     def test_cannot_create_a_recipe_instance_if_no_step(self):
         recipe_data = {

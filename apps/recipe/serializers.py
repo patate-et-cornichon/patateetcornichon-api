@@ -151,7 +151,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
     @transaction.atomic
     def save(self, **kwargs):
         """ Override the default save method."""
-        ingredients = self.validated_data.pop('ingredients')
+        ingredients = self.validated_data.pop('ingredients', None)
         tags = self.validated_data.pop('tags', None)
 
         # Save the new recipe
