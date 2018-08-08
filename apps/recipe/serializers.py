@@ -18,6 +18,7 @@ class ChildCategorySerializer(serializers.ModelSerializer):
             'slug',
             'name',
         )
+    read_only_fields = ('id',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -110,14 +111,14 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeRetrieveSerializer(BaseRecipeSerializer):
-    """ This serializer is used to retrieve Recipe models. """
+    """ This serializer is used to retrieve Recipe instances. """
 
     categories = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
 
 
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
-    """ This serializer is used to create or update Recipe models. """
+    """ This serializer is used to create or update Recipe instances. """
 
     main_picture = Base64ImageField(max_length=None, write_only=True)
     secondary_picture = Base64ImageField(

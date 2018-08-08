@@ -1,8 +1,10 @@
 import uuid
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
+from apps.comment.models import Comment
 from apps.recipe.files import (
     recipe_main_picture_directory_path, recipe_secondary_picture_directory_path)
 from common.db.abstract_models import DatedModel, SlugModel
@@ -62,6 +64,8 @@ class Recipe(SlugModel, DatedModel):
     introduction = models.TextField()
     ingredients = models.ManyToManyField('RecipeIngredient')
     steps = ArrayField(base_field=models.TextField())
+
+    comments = GenericRelation(Comment, related_query_name='recipe')
 
     # SEO fields
     views = models.IntegerField(default=0)

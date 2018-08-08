@@ -1,9 +1,12 @@
 [[source]]
+
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
+
 django = "*"
 django-heroku = "*"
 uwsgi = "*"
@@ -16,8 +19,11 @@ djangorestframework-jwt = "*"
 requests = "*"
 pillow = "*"
 "psycopg2-binary" = "*"
+django-filter = "*"
+
 
 [dev-packages]
+
 pytest = "*"
 pytest-django = "*"
 pytest-cov = "*"
@@ -29,5 +35,7 @@ ipython = "*"
 factory-boy = "*"
 faker = "*"
 
+
 [requires]
+
 python_version = "3.6"

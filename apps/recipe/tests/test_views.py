@@ -36,6 +36,7 @@ class TestRecipeViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_superuser(**user_data)
 
@@ -92,6 +93,7 @@ class TestRecipeViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_superuser(**user_data)
 
@@ -153,6 +155,7 @@ class TestRecipeViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_user(**user_data)
 

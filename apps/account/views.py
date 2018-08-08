@@ -1,9 +1,9 @@
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
-from apps.account.models import User
-from apps.account.permissions import IsAdminOrIsSelf
-from apps.account.serializers import UserSerializer
+from .models import User
+from .permissions import IsAdminOrIsSelf
+from .serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):

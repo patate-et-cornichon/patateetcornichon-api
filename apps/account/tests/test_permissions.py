@@ -10,10 +10,12 @@ class TestIsAdminOrIsSelf:
         user_data_1 = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user_data_2 = {
             'email': 'test2@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user_1 = User.objects.create_superuser(**user_data_1)
         user_2 = User.objects.create_user(**user_data_2)
@@ -29,6 +31,7 @@ class TestIsAdminOrIsSelf:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user = User.objects.create_superuser(**user_data)
 
@@ -43,10 +46,12 @@ class TestIsAdminOrIsSelf:
         user_data_1 = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user_data_2 = {
             'email': 'test2@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user_1 = User.objects.create_user(**user_data_1)
         user_2 = User.objects.create_user(**user_data_2)

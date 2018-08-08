@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from common.avatar import get_from_gravatar
 
-from .models import User
+from .models import UnregisteredUser, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,7 +11,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'avatar', 'password', 'first_name', 'last_name', 'website',)
+        fields = (
+            'id',
+            'email',
+            'avatar',
+            'password',
+            'first_name',
+            'last_name',
+            'website',
+        )
         read_only_fields = ('id',)
         extra_kwargs = {
             'password': {'write_only': True}
@@ -22,8 +30,9 @@ class UserSerializer(serializers.ModelSerializer):
         """ Create a new User instance. """
         email = validated_data['email']
         password = validated_data['password']
+        first_name = validated_data['first_name']
 
-        user = User.objects.create_user(email=email, password=password)
+        user = User.objects.create_user(email=email, first_name=first_name, password=password)
 
         # Try to get an avatar from the Gravatar service
         avatar = get_from_gravatar(email)
@@ -40,3 +49,18 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
+
+
+class UnregisteredUserSerializer(serializers.ModelSerializer):
+    """ This serializer is used to interact with unregistered user instances. """
+
+    class Meta:
+        model = UnregisteredUser
+        fields = (
+            'id',
+            'email',
+            'avatar',
+            'first_name',
+            'website',
+        )
+        read_only_fields = ('id', 'avatar')

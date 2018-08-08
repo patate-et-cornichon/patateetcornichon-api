@@ -18,6 +18,7 @@ class TestUserSerializer:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
 
         serializer = UserSerializer(data=user_data)
@@ -34,13 +35,14 @@ class TestUserSerializer:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user = User.objects.create_user(**user_data)
 
         new_user_data = {
             'email': 'test2@test.com',
             'password': 'toto',
-            'first_name': 'Kevin'
+            'first_name': 'Kevin',
         }
 
         serializer = UserSerializer(
@@ -67,6 +69,7 @@ class TestUserSerializer:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
 
         serializer = UserSerializer(data=user_data)

@@ -12,6 +12,7 @@ class TestUserViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
 
         client = APIClient()
@@ -23,12 +24,14 @@ class TestUserViewSet:
 
         assert user is not None
         assert user.email == user_data['email']
+        assert user.first_name == user_data['first_name']
         assert user.password != user_data['password']
 
     def test_can_retrieve_all_users_when_admin(self):
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_superuser(**user_data)
 
@@ -43,6 +46,7 @@ class TestUserViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user = User.objects.create_user(**user_data)
 
@@ -62,6 +66,7 @@ class TestUserViewSet:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_user(**user_data)
 
@@ -75,10 +80,12 @@ class TestUserViewSet:
         user_1_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user_2_data = {
             'email': 'test2@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_user(**user_1_data)
         other_user = User.objects.create_user(**user_2_data)

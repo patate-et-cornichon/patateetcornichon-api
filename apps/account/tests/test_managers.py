@@ -9,6 +9,7 @@ class TestUserManager:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user = User.objects.create_user(**user_data)
 
@@ -19,6 +20,7 @@ class TestUserManager:
         user_data = {
             'email': None,
             'password': 'test',
+            'first_name': 'Toto',
         }
         User.objects.create_user(**user_data)
 
@@ -26,6 +28,7 @@ class TestUserManager:
         user_data = {
             'email': 'test@test.com',
             'password': 'test',
+            'first_name': 'Toto',
         }
         user = User.objects.create_superuser(**user_data)
 
