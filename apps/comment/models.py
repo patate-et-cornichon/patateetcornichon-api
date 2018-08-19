@@ -1,4 +1,5 @@
 import uuid
+from collections import namedtuple
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -22,9 +23,9 @@ class Comment(DatedModel):
 
     # A user can post a comment as a classic user or can be unregistered.
     registered_author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE,
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.CASCADE,
     )
-    unregistered_author = JSONField(null=True)
+    unregistered_author = JSONField(blank=True, null=True)
 
     # An author can be notified when another user post a response in the conversation
     be_notified = models.BooleanField(default=False)
@@ -37,16 +38,29 @@ class Comment(DatedModel):
     commented_object = GenericForeignKey('content_type', 'object_id')
 
     parent = models.ForeignKey(
-        'self', null=True, related_name='children', on_delete=models.CASCADE,
+        'self', blank=True, null=True, related_name='children', on_delete=models.CASCADE,
     )
 
+    class Meta:
+        ordering = ['-created']
+
     def __str__(self):
-        return f'Comment from {self.author.email}'
+        return f'Comment from {self.author.email if self.author else "unknown author"}'
 
     @property
     def author(self):
         """ Get the author instance. """
-        return self.registered_author or self.unregistered_author
+        if self.registered_author is not None or self.unregistered_author is not None:
+            if self.registered_author:
+                return self.registered_author
+
+            # Create a namedtuple for unregistered author
+            unregistered_author_namedtuple = namedtuple(
+                'UnregisteredAuthor',
+                self.unregistered_author.keys()
+            )
+            unregistered_author = unregistered_author_namedtuple(*self.unregistered_author.values())
+            return unregistered_author
 
     def clean(self):
         # Don't allow comment without author.

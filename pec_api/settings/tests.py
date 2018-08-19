@@ -9,3 +9,9 @@ DATABASES = {
         },
     },
 }
+
+
+# Files configuration
+
+# See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATICFILES_STORAGE
+DEFAULT_FILE_STORAGE = 'pec_api.storage.OverwriteStorage'

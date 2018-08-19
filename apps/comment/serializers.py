@@ -29,7 +29,6 @@ class UnregisteredAuthorSerializer(serializers.Serializer):
             avatar_full_path = fs.url(avatar)
             avatar_absolute_uri = request.build_absolute_uri(avatar_full_path)
             return avatar_absolute_uri
-        return None
 
 
 class ChildCommentRetrieveSerializer(serializers.ModelSerializer):
@@ -82,6 +81,14 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id',)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Remove children field if we are looking for all comments
+        request = kwargs['context']['request']
+        if 'object_id' not in request.GET:
+            self.fields.pop('children')
+
 
 class CommentCreateUpdateSerializer(serializers.ModelSerializer):
     """ This serializer is used to create or update Comment instances. """
@@ -112,7 +119,7 @@ class CommentCreateUpdateSerializer(serializers.ModelSerializer):
         request = self.context['request']
 
         # Raise an error if no unregistered and user is not authenticated
-        if not attrs.get('unregistered_author') and request.user.is_authenticated is False:
+        if attrs.get('unregistered_author') is None and request.user.is_authenticated is False:
             return self.fail('author_required')
 
         return attrs
@@ -122,11 +129,12 @@ class CommentCreateUpdateSerializer(serializers.ModelSerializer):
 
         content_type = validated_data.pop('content_type')
         object_id = validated_data.pop('object_id')
-        unregistered_author = validated_data.pop('unregistered_author')
+        unregistered_author = validated_data.pop('unregistered_author', None)
         is_valid = validated_data.get('is_valid')
 
         additional_data = {}
 
+        # Set the comment user. Should be a registered author or an unregistered author.
         if request.user.is_authenticated:
             additional_data['registered_author'] = request.user
         else:
