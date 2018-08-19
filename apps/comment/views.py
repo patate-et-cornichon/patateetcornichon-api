@@ -8,7 +8,7 @@ from .serializers import CommentCreateUpdateSerializer, CommentRetrieveSerialize
 class CommentViewSet(ModelViewSet):
     """ Provide all methods for manage Comment. """
 
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.filter(parent__isnull=True).order_by('-created')
     filterset_class = CommentFilter
 
     def get_queryset(self):

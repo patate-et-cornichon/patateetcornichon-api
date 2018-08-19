@@ -35,17 +35,3 @@ class User(AbstractBaseUser, PermissionsMixin, DatedModel):
 
     def __str__(self):
         return self.email
-
-
-class UnregisteredUser(models.Model):
-    """ Represents an unregistered user. """
-
-    # Custom ID with an UUID instead of the default one
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    email = models.EmailField(max_length=150, unique=True, db_index=True)
-
-    # Extra user information
-    first_name = models.CharField(max_length=40)
-    avatar = models.FileField(upload_to='avatars/', null=True)
-    website = models.URLField(null=True)

@@ -3,10 +3,10 @@ import uuid
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from apps.account.models import UnregisteredUser
 from common.db.abstract_models import DatedModel
 
 
@@ -24,9 +24,7 @@ class Comment(DatedModel):
     registered_author = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE,
     )
-    unregistered_author = models.ForeignKey(
-        UnregisteredUser, null=True, on_delete=models.CASCADE,
-    )
+    unregistered_author = JSONField(null=True)
 
     # An author can be notified when another user post a response in the conversation
     be_notified = models.BooleanField(default=False)
@@ -39,7 +37,7 @@ class Comment(DatedModel):
     commented_object = GenericForeignKey('content_type', 'object_id')
 
     parent = models.ForeignKey(
-        'self', null=True, related_name='sub_comments', on_delete=models.CASCADE,
+        'self', null=True, related_name='children', on_delete=models.CASCADE,
     )
 
     def __str__(self):

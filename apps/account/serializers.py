@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from common.avatar import get_from_gravatar
 
-from .models import UnregisteredUser, User
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,18 +49,3 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
-
-
-class UnregisteredUserSerializer(serializers.ModelSerializer):
-    """ This serializer is used to interact with unregistered user instances. """
-
-    class Meta:
-        model = UnregisteredUser
-        fields = (
-            'id',
-            'email',
-            'avatar',
-            'first_name',
-            'website',
-        )
-        read_only_fields = ('id', 'avatar')
