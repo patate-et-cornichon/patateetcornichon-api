@@ -18,6 +18,12 @@ DEBUG = True
 DEFAULT_FILE_STORAGE = 'pec_api.storage.OverwriteStorage'
 
 
+# Email settings
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+DEFAULT_FROM_EMAIL = 'noreply@testing.patateetcornichon.com'
+
+
 # Heroku Configuration
 
 django_heroku.settings(locals(), staticfiles=False, test_runner=False)

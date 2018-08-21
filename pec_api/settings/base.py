@@ -4,6 +4,7 @@ Django base settings for Patate & Cornichon API project.
 
 import os
 from datetime import timedelta
+from distutils.util import strtobool
 
 import dj_database_url
 
@@ -123,6 +124,15 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
+
+
+# Email settings
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'notset')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'notset')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'notset')
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 'notset')
+EMAIL_USE_TLS = strtobool(os.environ.get('EMAIL_USE_TLS', 'True'))
 
 
 # Django Rest Framework Configuration

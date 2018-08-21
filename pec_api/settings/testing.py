@@ -30,6 +30,12 @@ STATICFILES_STORAGE = 'pec_api.storage.StaticRootS3BotoStorage'
 DEFAULT_FILE_STORAGE = 'pec_api.storage.MediaRootS3BotoStorage'
 
 
+# Email settings
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
+DEFAULT_FROM_EMAIL = 'noreply@testing.patateetcornichon.com'
+
+
 # Django Rest Framework Configuration
 
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRenderer',)  # noqa: F405 E501
