@@ -13,8 +13,8 @@ class CommentFactory(factory.django.DjangoModelFactory):
     """ Factory class for the ``Comment`` model. """
 
     unregistered_author = {
-        'email': 'test@test.com',
-        'first_name': 'Test'
+        'email': fake.email(),
+        'first_name': fake.name()
     }
     content = fake.text()
     commented_object = factory.SubFactory(RecipeFactory)

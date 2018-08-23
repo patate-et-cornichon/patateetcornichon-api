@@ -47,6 +47,11 @@ class Comment(DatedModel):
     def __str__(self):
         return f'Comment from {self.author.email if self.author else "unknown author"}'
 
+    def clean(self):
+        # Don't allow comment without author.
+        if self.registered_author is None and self.unregistered_author is None:
+            raise ValidationError('An author needs to be assigned.')
+
     @property
     def author(self):
         """ Get the author instance. """
@@ -62,7 +67,17 @@ class Comment(DatedModel):
             unregistered_author = unregistered_author_namedtuple(*self.unregistered_author.values())
             return unregistered_author
 
-    def clean(self):
-        # Don't allow comment without author.
-        if self.registered_author is None and self.unregistered_author is None:
-            raise ValidationError('An author needs to be assigned.')
+    def get_subscribers(self):
+        """ Get a list of all email to be notified when an answer is published. """
+        email_list = []
+        if self.parent is not None:
+            parent_email = self.parent.author.email
+            if self.parent.be_notified and parent_email != self.author.email:
+                email_list.append(parent_email)
+
+            children = self.parent.children
+            for child in children.all():
+                child_email = child.author.email
+                if child.be_notified and child_email != self.author.email:
+                    email_list.append(child_email)
+        return list(set(email_list))
