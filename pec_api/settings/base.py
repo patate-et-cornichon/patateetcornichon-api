@@ -8,9 +8,15 @@ from distutils.util import strtobool
 
 import dj_database_url
 
+import common
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+# Path of common module
+COMMON_PATH = os.path.dirname(common.__file__)
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,6 +45,7 @@ INSTALLED_APPS = [
     'apps.account',
     'apps.recipe',
     'apps.comment',
+    'common',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +63,9 @@ ROOT_URLCONF = 'pec_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': (
+            os.path.join(COMMON_PATH, 'templates'),
+        ),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -117,6 +126,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_ROOT = 'static'
+STATICFILES_DIRS = (
+    os.path.join(COMMON_PATH, 'static'),
+)
 STATIC_URL = '/static/'
 
 

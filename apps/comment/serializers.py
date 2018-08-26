@@ -1,6 +1,10 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import DefaultStorage
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from rest_framework import serializers
 
 from apps.account.serializers import UserSerializer
@@ -163,3 +167,42 @@ class CommentCreateUpdateSerializer(serializers.ModelSerializer):
 
         data = {**validated_data, **additional_data}
         return Comment.objects.create(**data)
+
+    def save(self, **kwargs):
+        """ Send a notification email to subscribers. """
+        instance = super().save(**kwargs)
+
+        if self.instance.parent is not None and self.instance.is_valid:
+            subject = 'Nouveau commentaire sur Patate & Cornichon'
+            bcc = [email for email in self.instance.get_subscribers()]
+
+            html_content = render_to_string('emails/new_comment.html', {
+                'request': self.context['request'],
+                'comment': self.instance,
+                'author_avatar_url': self._get_author_avatar(),
+            })
+            text_content = strip_tags(html_content)
+
+            msg = EmailMultiAlternatives(subject, text_content, bcc=bcc)
+            msg.attach_alternative(html_content, 'text/html')
+            msg.send(fail_silently=True)
+
+        return instance
+
+    def _get_author_avatar(self):
+        """ Get the author avatar or return a default avatar if does not exist. """
+        request = self.context['request']
+        avatar = self.instance.author.avatar
+
+        if bool(avatar):
+            if self.instance.registered_author is not None:
+                avatar = avatar.url
+            else:
+                fs = DefaultStorage()
+                avatar = fs.url(avatar)
+        else:
+            avatar_index = len(self.instance.author.email) % 7
+            avatar = static(
+                f'img/emails/avatars/default_avatar_{avatar_index}.png'
+            )
+        return request.build_absolute_uri(avatar)

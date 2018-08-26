@@ -21,7 +21,7 @@ DEFAULT_FILE_STORAGE = 'pec_api.storage.OverwriteStorage'
 # Email settings
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = 'noreply@testing.patateetcornichon.com'
+DEFAULT_FROM_EMAIL = 'Patate & Cornichon <noreply@testing.patateetcornichon.com>'
 
 
 # Heroku Configuration

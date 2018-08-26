@@ -62,9 +62,14 @@ class Comment(DatedModel):
             # Create a namedtuple for unregistered author
             unregistered_author_namedtuple = namedtuple(
                 'UnregisteredAuthor',
-                self.unregistered_author.keys()
+                ['email', 'first_name', 'avatar', 'website'],
             )
-            unregistered_author = unregistered_author_namedtuple(*self.unregistered_author.values())
+            unregistered_author = unregistered_author_namedtuple(
+                email=self.unregistered_author['email'],
+                first_name=self.unregistered_author['first_name'],
+                avatar=self.unregistered_author.get('avatar'),
+                website=self.unregistered_author.get('website'),
+            )
             return unregistered_author
 
     def get_subscribers(self):

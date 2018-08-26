@@ -1,0 +1,89 @@
+<mjml>
+  <mj-head>
+    <mj-title>Nouveau commentaire sur Patate & Cornichon</mj-title>
+    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto:300,500"></mj-font>
+    <mj-attributes>
+      <mj-all font-family="Roboto, Helvetica, sans-serif"></mj-all>
+      <mj-text font-weight="300" font-size="16px" color="#616161" line-height="24px"></mj-text>
+      <mj-section padding="0px"></mj-section>
+    </mj-attributes>
+     <mj-style inline="inline">
+      .link-nostyle {
+        color: inherit;
+        text-decoration: none
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section padding="20px 0">
+      <mj-column width="100%">
+        <mj-text font-size="10px">Celui qui mange vite va vite à sa tombe.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="250px">
+          <mj-text>
+              {% load absolute_uri %}
+          </mj-text>
+          <mj-image href="https://patateetcornichon.com" src="{% absolute_uri_static 'img/logo.jpg' %}"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section padding-top="20px">
+      <mj-column width="45%">
+        <mj-text align="center" font-weight="500" padding="0px" font-size="18px">
+        	Un nouveau commentaire !
+        </mj-text>
+      </mj-column>
+      <mj-column width="100%">
+        <mj-text align="center">
+          {% if comment.content_type.app_label == 'recipe' %}
+            <p>Un nouveau commentaire a été posté dans une conversation de la recette <br><a href="https://patateetcornichon.com/recettes/{{ comment.commented_object.slug }}" class="link-nostyle"><strong>{{ comment.commented_object.full_title }}</strong></a>.<br/></p>
+          {% elif comment.content_type.app_label == 'blog' %}
+              <p>Un nouveau commentaire a été posté dans une conversation de l'article <br><a href="https://patateetcornichon.com/blog/{{ comment.commented_object.slug }}" class="link-nostyle"><strong>{{ comment.commented_object.full_title }}</strong></a>.<br/></p>
+          {% endif %}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="20%">
+        <mj-image padding-right="0px" padding-left="25px" align="left" width="70px" border-radius="35px" src="{{ author_avatar_url }}"></mj-image>
+      </mj-column>
+      <mj-column width="80%">
+        <mj-text padding="0 25px">
+          <p style="color:#BDBDBD; line-height: 9px; font-weight: bold;">{{ comment.author.first_name }}</p>
+          <p style="font-style: italic; color:#BDBDBD; line-height: 9px">{{ comment.content|safe }} </p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="100%">
+        <mj-divider border-width="1px" border-color="#E0E0E0"></mj-divider>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="60%">
+        <mj-text>
+          <a href="https://patateetcornichon.com" class="link-nostyle">patateetcornichon.com</a>
+        </mj-text>
+      </mj-column>
+      <mj-column width="35%">
+        <mj-table>
+          <tr style="list-style: none;line-height:1">
+            <td> <a href="https://www.facebook.com/patate.et.cornichon.cuisine.vegetale/">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/facebook.png' %}" />
+                </a> </td>
+            <td> <a href="https://www.instagram.com/patateetcornichon/">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/instagram.png' %}" />
+                </a> </td>
+            <td> <a href="https://twitter.com/PeC_cooking">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/twitter.png' %}" />
+                </a> </td>
+            <td> <a href="https://www.youtube.com/c/PatateetcornichonFr-cooking">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/youtube.png' %}" />
+                </a> </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
