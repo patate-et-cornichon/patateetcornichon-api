@@ -77,6 +77,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'slug',
+            'published',
 
             # Titles
             'title',

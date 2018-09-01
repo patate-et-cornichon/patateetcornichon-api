@@ -43,8 +43,9 @@ INSTALLED_APPS = [
 
     # Projects apps,
     'apps.account',
-    'apps.recipe',
     'apps.comment',
+    'apps.recipe',
+    'apps.story',
     'common',
 ]
 

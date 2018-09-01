@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -15,9 +17,35 @@ class DatedModel(models.Model):
 
 
 class SlugModel(models.Model):
-    """ Represents am abstract model used to add a slug field. """
+    """ Represents an abstract model used to add a slug field. """
 
     slug = models.SlugField(max_length=75, unique=True)
 
     class Meta:
         abstract = True
+
+
+class PostModel(SlugModel, DatedModel):
+    """ Represents an abstract model used to represent common post attributes. """
+
+    # Custom ID with an UUID instead of the default one
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # We store the fact thatthe post can be published or not
+    published = models.BooleanField(default=False)
+
+    # We store post titles with a main title and sub title. The full title can not
+    # be only the concatenation of the two fields because we want to customize it as we want.
+    title = models.CharField(max_length=255)
+    sub_title = models.CharField(max_length=255)
+    full_title = models.CharField(max_length=255, unique=True)
+
+    # SEO fields
+    views = models.IntegerField(default=0)
+    meta_description = models.TextField()
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.full_title

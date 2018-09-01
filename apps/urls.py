@@ -12,7 +12,8 @@ urlpatterns = [
 
     # Apps views
     path('users', include('apps.account.urls')),
-    path('junk-food', include('apps.recipe.urls')),
+    path('recipes', include('apps.recipe.urls')),
+    path('stories', include('apps.story.urls')),
     path('comments', include('apps.comment.urls')),
 
     # Auth view

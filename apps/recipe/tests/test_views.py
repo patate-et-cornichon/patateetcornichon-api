@@ -3,7 +3,6 @@ import os
 from base64 import b64encode
 
 import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -134,22 +133,6 @@ class TestRecipeViewSet:
     def test_cannot_create_a_new_recipe_when_non_staff(self):
         recipe_data = {
             'slug': 'super-recette',
-            'title': 'Crêpes',
-            'sub_title': 'vegan',
-            'full_title': 'Crêpes vegan au chocolat',
-            'main_picture': SimpleUploadedFile(
-                name='recipe.jpg',
-                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
-                content_type='image/jpeg'
-            ),
-            'goal': '2 pers.',
-            'preparation_time': 30,
-            'introduction': 'Hello world',
-            'meta_description': 'Recettes de crêpes vegan',
-            'steps': [
-                'Ajouter la farine',
-                'Ajouter le lait végétal',
-            ],
         }
 
         user_data = {

@@ -7,8 +7,8 @@ from .views import CategoryViewSet, RecipeViewSet
 
 
 router = DefaultRouter()
-router.register(r'recipes', RecipeViewSet, base_name='recipe')
 router.register(r'categories', CategoryViewSet, base_name='category')
+router.register(r'', RecipeViewSet, base_name='recipe')
 
 app_name = 'recipe'
 urlpatterns = [

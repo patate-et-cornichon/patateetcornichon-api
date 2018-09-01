@@ -36,9 +36,9 @@
       </mj-column>
       <mj-column width="100%">
         <mj-text align="center">
-          {% if comment.content_type.app_label == 'recipe' %}
+          {% if comment.content_type.model == 'recipe' %}
             <p>Un nouveau commentaire a été posté dans une conversation de la recette <br><a href="https://patateetcornichon.com/recettes/{{ comment.commented_object.slug }}" class="link-nostyle"><strong>{{ comment.commented_object.full_title }}</strong></a>.<br/></p>
-          {% elif comment.content_type.app_label == 'blog' %}
+          {% elif comment.content_type.model == 'story' %}
               <p>Un nouveau commentaire a été posté dans une conversation de l'article <br><a href="https://patateetcornichon.com/blog/{{ comment.commented_object.slug }}" class="link-nostyle"><strong>{{ comment.commented_object.full_title }}</strong></a>.<br/></p>
           {% endif %}
         </mj-text>

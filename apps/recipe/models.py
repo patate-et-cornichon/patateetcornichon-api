@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -7,23 +5,11 @@ from django.db import models
 from apps.comment.models import Comment
 from apps.recipe.files import (
     recipe_main_picture_directory_path, recipe_secondary_picture_directory_path)
-from common.db.abstract_models import DatedModel, SlugModel
+from common.db.abstract_models import PostModel, SlugModel
 
 
-class Recipe(SlugModel, DatedModel):
+class Recipe(PostModel):
     """ Represents the model of a Recipe """
-
-    # Custom ID with an UUID instead of the default one
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    # We store the fact that a recipe can be published or not
-    published = models.BooleanField(default=False)
-
-    # We store recipes titles with a main title and sub title. The full title can not
-    # be only the concatenation of the two fields because we want to customize it as we want.
-    title = models.CharField(max_length=255)
-    sub_title = models.CharField(max_length=255)
-    full_title = models.CharField(max_length=255, unique=True)
 
     # We have two types of image: a recipe illustration and an optional second illustration.
     main_picture = models.ImageField(upload_to=recipe_main_picture_directory_path)
@@ -66,13 +52,6 @@ class Recipe(SlugModel, DatedModel):
     steps = ArrayField(base_field=models.TextField())
 
     comments = GenericRelation(Comment, related_query_name='recipe')
-
-    # SEO fields
-    views = models.IntegerField(default=0)
-    meta_description = models.TextField()
-
-    def __str__(self):
-        return self.full_title
 
 
 class Category(SlugModel):

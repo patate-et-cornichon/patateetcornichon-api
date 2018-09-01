@@ -8,7 +8,7 @@ from .models import Comment
 class CommentFilter(filters.FilterSet):
     """ Filter through ``Comment`` instances. """
 
-    content_type = filters.ChoiceFilter(choices=VALID_CONTENT_TYPES, lookup_expr='app_label')
+    content_type = filters.ChoiceFilter(choices=VALID_CONTENT_TYPES, lookup_expr='model')
     object_id = filters.UUIDFilter(method='filter_object_id')
 
     class Meta:
