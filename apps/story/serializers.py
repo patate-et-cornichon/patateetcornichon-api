@@ -29,6 +29,8 @@ class BaseStorySerializer(serializers.ModelSerializer):
             'id',
             'slug',
             'published',
+            'created',
+            'updated',
 
             # Titles
             'title',
@@ -50,7 +52,7 @@ class BaseStorySerializer(serializers.ModelSerializer):
             # SEO
             'meta_description',
         )
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'created', 'updated')
 
 
 class StoryRetrieveSerializer(BaseStorySerializer):

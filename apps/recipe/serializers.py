@@ -78,6 +78,8 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
             'id',
             'slug',
             'published',
+            'created',
+            'updated',
 
             # Titles
             'title',
@@ -108,7 +110,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
             # SEO
             'meta_description',
         )
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'created', 'updated')
 
 
 class RecipeRetrieveSerializer(BaseRecipeSerializer):
