@@ -20,6 +20,7 @@ requests = "*"
 pillow = "*"
 "psycopg2-binary" = "*"
 django-filter = "*"
+django-cors-headers = "*"
 
 
 [dev-packages]

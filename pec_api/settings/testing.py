@@ -21,6 +21,14 @@ DEBUG = False
 SECURE_SSL_REDIRECT = True
 
 
+# CORS Configuration
+
+CORS_ORIGIN_WHITELIST = (
+    'testing.admin.patateetcornichon.com',
+    'localhost:4200',
+)
+
+
 # Files configuration
 
 # See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEFAULT_FILE_STORAGE
