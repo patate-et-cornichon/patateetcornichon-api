@@ -9,6 +9,7 @@ class StoryViewSet(ModelViewSet):
     """ Provide all methods for manage Story. """
 
     queryset = Story.objects.all()
+    lookup_field = 'slug'
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions that this view requires. """
