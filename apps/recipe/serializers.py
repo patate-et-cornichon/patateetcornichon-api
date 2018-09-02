@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils.text import slugify
 from rest_framework import serializers
 
+from apps.comment.models import Comment
 from common.drf.fields import Base64ImageField
 
 from .models import Category, Ingredient, Recipe, RecipeIngredient, Tag, Unit
@@ -118,6 +119,15 @@ class RecipeRetrieveSerializer(BaseRecipeSerializer):
 
     categories = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
+    comments_count = serializers.SerializerMethodField()
+
+    class Meta(BaseRecipeSerializer.Meta):
+        fields = BaseRecipeSerializer.Meta.fields + ('comments_count',)
+
+    def get_comments_count(self, obj):
+        """ Return the number of comments associated to the recipe. """
+        comments = Comment.objects.filter(object_id=obj.id)
+        return comments.count()
 
 
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
