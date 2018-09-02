@@ -46,6 +46,7 @@ class PostModel(SlugModel, DatedModel):
 
     class Meta:
         abstract = True
+        ordering = ['-created']
 
     def __str__(self):
         return self.full_title

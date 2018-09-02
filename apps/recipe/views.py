@@ -2,6 +2,8 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from common.drf.pagination import StandardResultsSetPagination
+
 from .models import Category, Recipe
 from .serializers import CategorySerializer, RecipeCreateUpdateSerializer, RecipeRetrieveSerializer
 
@@ -11,6 +13,7 @@ class RecipeViewSet(ModelViewSet):
 
     queryset = Recipe.objects.all()
     lookup_field = 'slug'
+    pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
         """ Instantiates and returns the list of permissions that this view requires. """
