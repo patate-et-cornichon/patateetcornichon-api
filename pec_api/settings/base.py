@@ -175,6 +175,7 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': timedelta(hours=1),
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'common.drf.jwt.jwt_response_payload_handler',
 }
 
 
