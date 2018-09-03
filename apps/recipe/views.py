@@ -4,8 +4,9 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from common.drf.pagination import StandardResultsSetPagination
 
-from .models import Category, Recipe
-from .serializers import CategorySerializer, RecipeCreateUpdateSerializer, RecipeRetrieveSerializer
+from .models import Category, Recipe, Tag
+from .serializers import (
+    CategorySerializer, RecipeCreateUpdateSerializer, RecipeRetrieveSerializer, TagSerializer)
 
 
 class RecipeViewSet(ModelViewSet):
@@ -42,3 +43,10 @@ class CategoryViewSet(ListModelMixin, GenericViewSet):
 
     queryset = Category.objects.filter(parent__isnull=True)
     serializer_class = CategorySerializer
+
+
+class TagViewSet(ListModelMixin, GenericViewSet):
+    """ Provide a list view for Tag. """
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
