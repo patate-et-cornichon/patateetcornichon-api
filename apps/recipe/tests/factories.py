@@ -1,7 +1,7 @@
 import factory
 from faker import Factory
 
-from ..models import Category, Ingredient, Recipe, RecipeIngredient, Tag, Unit
+from ..models import Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, Tag, Unit
 
 
 fake = Factory.create()
@@ -33,6 +33,24 @@ class RecipeIngredientFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = RecipeIngredient
+
+
+class RecipeCompositionFactory(factory.django.DjangoModelFactory):
+    """ Factory class for the ``RecipeComposition`` model. """
+
+    ingredients = factory.SubFactory(RecipeIngredientFactory)
+
+    class Meta:
+        model = RecipeComposition
+
+    @factory.post_generation
+    def ingredients(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for ingredient in extracted:
+                self.ingredients.add(ingredient)
 
 
 class CategoryFactory(factory.DjangoModelFactory):

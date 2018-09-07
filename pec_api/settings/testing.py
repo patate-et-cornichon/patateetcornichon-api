@@ -24,7 +24,7 @@ SECURE_SSL_REDIRECT = True
 # CORS Configuration
 
 CORS_ORIGIN_WHITELIST = (
-    'testing.admin.patateetcornichon.com',
+    'testing-admin.patateetcornichon.com',
     'localhost:4200',
 )
 

@@ -6,7 +6,7 @@ from rest_framework import serializers
 from apps.comment.models import Comment
 from common.drf.fields import Base64ImageField
 
-from .models import Category, Ingredient, Recipe, RecipeIngredient, Tag, Unit
+from .models import Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, Tag, Unit
 
 
 class ChildCategorySerializer(serializers.ModelSerializer):
@@ -69,10 +69,33 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         return obj.unit.name
 
 
+class RecipeCompositionSerializer(serializers.ModelSerializer):
+    """ This is the base serializer of Recipe Composition serializers. """
+
+    ingredients = RecipeIngredientSerializer(many=True)
+
+    default_error_messages = {
+        'ingredients_required': 'At least one ingredient is required.',
+    }
+
+    class Meta:
+        model = RecipeComposition
+        fields = (
+            'name',
+            'ingredients',
+        )
+
+    def validate_ingredients(self, value):
+        """ At least one ingredient is required. """
+        if not value:
+            return self.fail('ingredients_required')
+        return value
+
+
 class BaseRecipeSerializer(serializers.ModelSerializer):
     """ This is the base serializer of Recipe serializers. """
 
-    ingredients = RecipeIngredientSerializer(many=True)
+    composition = RecipeCompositionSerializer(many=True)
 
     class Meta:
         model = Recipe
@@ -106,7 +129,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 
             # Recipe content
             'introduction',
-            'ingredients',
+            'composition',
             'steps',
 
             # SEO
@@ -148,7 +171,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
 
     default_error_messages = {
         'steps_required': 'At least one step is required.',
-        'ingredients_required': 'At least one ingredient step is required.',
+        'composition_required': 'At least one composition is required.',
     }
 
     def validate_steps(self, value):
@@ -157,55 +180,64 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
             return self.fail('steps_required')
         return value
 
-    def validate_ingredients(self, value):
-        """ At least one ingredients is required. """
+    def validate_composition(self, value):
+        """ At least one composition is required. """
         if self.instance is None and not value:  # pragma: no cover
-            return self.fail('ingredients_required')
+            return self.fail('composition_required')
         return value
 
     @transaction.atomic
     def save(self, **kwargs):
         """ Override the default save method."""
-        ingredients = self.validated_data.pop('ingredients', None)
+        composition = self.validated_data.pop('composition', None)
         tags = self.validated_data.pop('tags', None)
 
         # Save the new recipe
         instance = super().save(**kwargs)
 
         # Assign ingredients. For each ingredient, create it if not exists.
-        if ingredients:
-            instance.ingredients.clear()
-            for recipe_ingredient_item in ingredients:
-                # Ingredient management
-                ingredient_name = recipe_ingredient_item['ingredient']
-                ingredient_slug = slugify(ingredient_name)
-                ingredient = (
-                    Ingredient.objects
-                    .filter(Q(slug=ingredient_slug) | Q(name__iexact=ingredient_name))
-                    .first()
-                )
-                if ingredient is None:
-                    ingredient = Ingredient.objects.create(
-                        slug=ingredient_slug,
-                        name=ingredient_name,
+        if composition:
+            instance.composition.clear()
+            for item in composition:
+                ingredients = []
+                for recipe_ingredient_item in item['ingredients']:
+                    # Ingredient management
+                    ingredient_name = recipe_ingredient_item['ingredient']
+                    ingredient_slug = slugify(ingredient_name)
+                    ingredient = (
+                        Ingredient.objects
+                        .filter(Q(slug=ingredient_slug) | Q(name__iexact=ingredient_name))
+                        .first()
+                    )
+                    if ingredient is None:
+                        ingredient = Ingredient.objects.create(
+                            slug=ingredient_slug,
+                            name=ingredient_name,
+                        )
+
+                    # Ingredient Unit management
+                    unit_name = recipe_ingredient_item.get('unit')
+                    unit = None
+                    if unit_name is not None:
+                        unit, _ = Unit.objects.get_or_create(
+                            name__iexact=unit_name,
+                            defaults={'name': unit_name},
+                        )
+
+                    recipe_ingredient = RecipeIngredient.objects.create(
+                        ingredient=ingredient,
+                        unit=unit,
+                        quantity=recipe_ingredient_item.get('quantity'),
                     )
 
-                # Ingredient Unit management
-                unit_name = recipe_ingredient_item.get('unit')
-                unit = None
-                if unit_name is not None:
-                    unit, _ = Unit.objects.get_or_create(
-                        name__iexact=unit_name,
-                        defaults={'name': unit_name},
-                    )
+                    ingredients.append(recipe_ingredient)
 
-                recipe_ingredient = RecipeIngredient.objects.create(
-                    ingredient=ingredient,
-                    unit=unit,
-                    quantity=recipe_ingredient_item.get('quantity'),
+                # Add the composition to the recipe
+                composition = RecipeComposition.objects.create(
+                    name=item.get('name') or None,
                 )
-
-                instance.ingredients.add(recipe_ingredient)
+                composition.ingredients.set(ingredients)
+                instance.composition.add(composition)
 
         # Assign tags. For each tag, create it if not exists.
         if tags is not None:

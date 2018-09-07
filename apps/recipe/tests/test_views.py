@@ -63,23 +63,32 @@ class TestRecipeViewSet:
                     category_2.id
                 ],
                 'introduction': 'Hello world',
-                'ingredients': [
+                'composition': [
                     {
-                        'ingredient': 'Eau',
+                        'ingredients': [
+                            {
+                                'ingredient': 'Eau',
+                            },
+                            {
+                                'ingredient': 'Olives',
+                                'quantity': 2,
+                            },
+                        ],
                     },
                     {
-                        'ingredient': 'Olives',
-                        'quantity': 2,
-                    },
-                    {
-                        'ingredient': 'Patates',
-                        'unit': 'gr',
-                        'quantity': 2,
-                    },
-                    {
-                        'ingredient': 'Sucre',
-                        'unit': 'gr',
-                        'quantity': 3,
+                        'name': 'Pâte',
+                        'ingredients': [
+                            {
+                                'ingredient': 'Patates',
+                                'unit': 'gr',
+                                'quantity': 2,
+                            },
+                            {
+                                'ingredient': 'Sucre',
+                                'unit': 'gr',
+                                'quantity': 3,
+                            },
+                        ],
                     },
                 ],
                 'steps': [
@@ -119,12 +128,13 @@ class TestRecipeViewSet:
         assert category_2 in recipe.categories.all()
 
         # Check if ingredients exist
-        ingredients = recipe_data.pop('ingredients')
-        for ingredient_item in ingredients:
-            assert (
-                Ingredient.objects.filter(name=ingredient_item['ingredient']).first()
-                is not None
-            )
+        composition = recipe_data.pop('composition')
+        for composition_item in composition:
+            for ingredient_item in composition_item['ingredients']:
+                assert (
+                    Ingredient.objects.filter(name=ingredient_item['ingredient']).first()
+                    is not None
+                )
 
         # Check data are well populated
         for key, value in recipe_data.items():

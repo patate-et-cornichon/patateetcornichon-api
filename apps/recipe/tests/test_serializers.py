@@ -4,8 +4,9 @@ from base64 import b64encode
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from apps.recipe.models import Recipe
-from apps.recipe.serializers import RecipeCreateUpdateSerializer, RecipeIngredientSerializer
+from apps.recipe.models import Recipe, RecipeIngredient
+from apps.recipe.serializers import (
+    RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer)
 from apps.recipe.tests.factories import (
     CategoryFactory, RecipeIngredientFactory, TagFactory, UnitFactory)
 
@@ -33,23 +34,32 @@ class TestRecipeCreateUpdateSerializer:
                 'goal': '2 pers.',
                 'preparation_time': 30,
                 'introduction': 'Hello world',
-                'ingredients': [
+                'composition': [
                     {
-                        'ingredient': 'Eau',
+                        'ingredients': [
+                            {
+                                'ingredient': 'Eau',
+                            },
+                            {
+                                'ingredient': 'Olives',
+                                'quantity': 2,
+                            },
+                        ],
                     },
                     {
-                        'ingredient': 'Olives',
-                        'quantity': 2,
-                    },
-                    {
-                        'ingredient': 'Patates',
-                        'unit': 'gr',
-                        'quantity': 2,
-                    },
-                    {
-                        'ingredient': 'Sucre',
-                        'unit': 'gr',
-                        'quantity': 3,
+                        'name': 'Pâte',
+                        'ingredients': [
+                            {
+                                'ingredient': 'Patates',
+                                'unit': 'gr',
+                                'quantity': 2,
+                            },
+                            {
+                                'ingredient': 'Sucre',
+                                'unit': 'gr',
+                                'quantity': 3,
+                            },
+                        ],
                     },
                 ],
                 'steps': [
@@ -77,18 +87,17 @@ class TestRecipeCreateUpdateSerializer:
         assert category_2 in recipe.categories.all()
 
         # Check if the categories are valid
-        ingredients = recipe_data.pop('ingredients')
-        for ingredients_item in ingredients:
-            ingredient_name = ingredients_item['ingredient']
-            recipe_ingredient = (
-                recipe.ingredients
-                .filter(ingredient__name=ingredient_name)
-                .first()
-            )
-            assert recipe_ingredient is not None
-            assert recipe_ingredient.quantity == ingredients_item.get('quantity')
-            if recipe_ingredient.unit:
-                assert recipe_ingredient.unit.name == ingredients_item['unit']
+        composition = recipe_data.pop('composition')
+        for composition_item in composition:
+            for ingredients_item in composition_item['ingredients']:
+                ingredient_name = ingredients_item['ingredient']
+                recipe_ingredient = (
+                    RecipeIngredient.objects.filter(ingredient__name=ingredient_name).first()
+                )
+                assert recipe_ingredient is not None
+                assert recipe_ingredient.quantity == ingredients_item.get('quantity')
+                if recipe_ingredient.unit:
+                    assert recipe_ingredient.unit.name == ingredients_item['unit']
 
         # Check data are well populated
         for key, value in recipe_data.items():
@@ -118,16 +127,32 @@ class TestRecipeCreateUpdateSerializer:
                 'goal': '2 pers.',
                 'preparation_time': 30,
                 'introduction': 'Hello world',
-                'ingredients': [
+                'composition': [
                     {
-                        'ingredient': 'Patates',
-                        'unit': 'gr',
-                        'quantity': 2,
+                        'ingredients': [
+                            {
+                                'ingredient': 'Eau',
+                            },
+                            {
+                                'ingredient': 'Olives',
+                                'quantity': 2,
+                            },
+                        ],
                     },
                     {
-                        'ingredient': 'Sucre',
-                        'unit': 'gr',
-                        'quantity': 3,
+                        'name': 'Pâte',
+                        'ingredients': [
+                            {
+                                'ingredient': 'Patates',
+                                'unit': 'gr',
+                                'quantity': 2,
+                            },
+                            {
+                                'ingredient': 'Sucre',
+                                'unit': 'gr',
+                                'quantity': 3,
+                            },
+                        ],
                     },
                 ],
                 'steps': [
@@ -175,3 +200,14 @@ class TestRecipeCreateUpdateSerializer:
         serializer = RecipeCreateUpdateSerializer(data=recipe_data)
         assert not serializer.is_valid()
         assert 'steps' in serializer.errors
+
+
+@pytest.mark.django_db
+class TestRecipeCompositionSerializer:
+    def test_cannot_validate_composition_without_one_ingredient_object(self):
+        serializer = RecipeCompositionSerializer(data={
+            'name': 'Great composition',
+            'ingredients': [],
+        })
+        assert not serializer.is_valid()
+        assert 'ingredients' in serializer.errors

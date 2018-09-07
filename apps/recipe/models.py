@@ -48,7 +48,7 @@ class Recipe(PostModel):
 
     # Recipe main data (introduction, ingredients, steps, etc.)
     introduction = models.TextField()
-    ingredients = models.ManyToManyField('RecipeIngredient')
+    composition = models.ManyToManyField('RecipeComposition')
     steps = ArrayField(base_field=models.TextField())
 
     comments = GenericRelation(Comment, related_query_name='recipe')
@@ -77,6 +77,16 @@ class Tag(SlugModel):
 
     def __str__(self):
         return self.name
+
+
+class RecipeComposition(models.Model):
+    """ A recipe composition is a part of the recipe (like a sauce, a cake dough, etc.) containing
+        ingredients.
+        Should be a list of all ingredients if there is not a specific composition.
+     """
+
+    name = models.CharField(max_length=255, blank=True, null=True)
+    ingredients = models.ManyToManyField('RecipeIngredient')
 
 
 class RecipeIngredient(models.Model):

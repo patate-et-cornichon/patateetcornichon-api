@@ -4,8 +4,9 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe
+from apps.recipe.tests.factories import RecipeCompositionFactory
 
-from .factories import CategoryFactory, RecipeIngredientFactory
+from .factories import CategoryFactory
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -15,7 +16,7 @@ FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
 class TestRecipe:
     def test_can_create_a_recipe(self):
         categories = CategoryFactory.create_batch(2)
-        ingredients = RecipeIngredientFactory.create_batch(7)
+        composition = RecipeCompositionFactory.create_batch(7)
 
         recipe_data = {
             'title': 'Chocolatine',
@@ -37,7 +38,7 @@ class TestRecipe:
         }
         recipe = Recipe.objects.create(**recipe_data)
         recipe.categories.add(*categories)
-        recipe.ingredients.add(*ingredients)
+        recipe.composition.add(*composition)
 
         # Check if the pictures name are equal
         recipe_data.pop('main_picture')
@@ -49,4 +50,4 @@ class TestRecipe:
 
         # Check relative models
         assert list(recipe.categories.all()) == categories
-        assert list(recipe.ingredients.all()) == ingredients
+        assert list(recipe.composition.all()) == composition
