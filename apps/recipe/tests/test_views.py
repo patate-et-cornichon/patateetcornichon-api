@@ -132,7 +132,7 @@ class TestRecipeViewSet:
         for composition_item in composition:
             for ingredient_item in composition_item['ingredients']:
                 assert (
-                    Ingredient.objects.filter(name=ingredient_item['ingredient']).first()
+                    Ingredient.objects.filter(name=ingredient_item['ingredient'].lower()).first()
                     is not None
                 )
 

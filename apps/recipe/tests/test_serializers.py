@@ -92,7 +92,9 @@ class TestRecipeCreateUpdateSerializer:
             for ingredients_item in composition_item['ingredients']:
                 ingredient_name = ingredients_item['ingredient']
                 recipe_ingredient = (
-                    RecipeIngredient.objects.filter(ingredient__name=ingredient_name).first()
+                    RecipeIngredient.objects
+                    .filter(ingredient__name=ingredient_name.lower())
+                    .first()
                 )
                 assert recipe_ingredient is not None
                 assert recipe_ingredient.quantity == ingredients_item.get('quantity')
@@ -170,8 +172,8 @@ class TestRecipeCreateUpdateSerializer:
         assert recipe is not None
 
         assert recipe.tags.filter(id=tag.id).first() is not None
-        assert recipe_data['tags'][1] in list(recipe.tags.values_list('name', flat=True))
-        assert recipe_data['tags'][2] in list(recipe.tags.values_list('name', flat=True))
+        assert recipe_data['tags'][1].lower() in list(recipe.tags.values_list('name', flat=True))
+        assert recipe_data['tags'][2].lower() in list(recipe.tags.values_list('name', flat=True))
 
     def test_can_returns_ingredients_information(self):
         unit = UnitFactory.create()

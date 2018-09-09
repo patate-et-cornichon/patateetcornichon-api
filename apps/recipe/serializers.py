@@ -48,6 +48,27 @@ class TagSerializer(serializers.ModelSerializer):
         )
 
 
+class IngredientSerializer(serializers.ModelSerializer):
+    """ This serializer is used to interact with ingredients instances. """
+
+    class Meta:
+        model = Ingredient
+        fields = (
+            'slug',
+            'name',
+        )
+
+
+class UnitSerializer(serializers.ModelSerializer):
+    """ This serializer is used to interact with units instances. """
+
+    class Meta:
+        model = Unit
+        fields = (
+            'name',
+        )
+
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     """ This serializer is used to interact with recipe ingredients instances. """
 
@@ -212,7 +233,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                     if ingredient is None:
                         ingredient = Ingredient.objects.create(
                             slug=ingredient_slug,
-                            name=ingredient_name,
+                            name=ingredient_name.lower(),
                         )
 
                     # Ingredient Unit management
@@ -221,7 +242,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                     if unit_name is not None:
                         unit, _ = Unit.objects.get_or_create(
                             name__iexact=unit_name,
-                            defaults={'name': unit_name},
+                            defaults={'name': unit_name.lower()},
                         )
 
                     recipe_ingredient = RecipeIngredient.objects.create(
@@ -251,5 +272,5 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                     .first()
                 )
                 if tag is None:
-                    tag = Tag.objects.create(slug=tag_slug, name=tag_name)
+                    tag = Tag.objects.create(slug=tag_slug, name=tag_name.lower())
                 instance.tags.add(tag)
