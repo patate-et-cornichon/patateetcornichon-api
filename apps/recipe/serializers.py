@@ -73,7 +73,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     """ This serializer is used to interact with recipe ingredients instances. """
 
     ingredient = serializers.CharField(max_length=255)
-    unit = serializers.CharField(max_length=255, required=False)
+    unit = serializers.CharField(max_length=255, required=False, allow_null=True)
 
     class Meta:
         model = RecipeIngredient
@@ -183,11 +183,13 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
         max_length=None,
         write_only=True,
         required=False,
+        allow_null=True,
     )
     tags = serializers.ListField(
         child=serializers.CharField(max_length=255),
-        required=False,
         write_only=True,
+        required=False,
+        allow_null=True,
     )
 
     default_error_messages = {
