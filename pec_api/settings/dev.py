@@ -12,6 +12,11 @@ from .base import *  # noqa: F403 F401
 DEBUG = True
 
 
+# CORS Configuration
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
 # Files configuration
 
 # See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATICFILES_STORAGE
