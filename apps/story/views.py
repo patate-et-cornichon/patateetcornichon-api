@@ -1,6 +1,8 @@
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
+from common.drf.pagination import StandardResultsSetPagination
+
 from .models import Story
 from .serializers import StoryCreateUpdateSerializer, StoryRetrieveSerializer
 
@@ -10,6 +12,7 @@ class StoryViewSet(ModelViewSet):
 
     queryset = Story.objects.all()
     lookup_field = 'slug'
+    pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions that this view requires. """

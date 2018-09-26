@@ -9,7 +9,6 @@ name = "pypi"
 
 django = "*"
 django-heroku = "*"
-uwsgi = "*"
 djangorestframework = "*"
 dj-database-url = "*"
 raven = "*"
@@ -18,9 +17,10 @@ django-storages = "*"
 djangorestframework-jwt = "*"
 requests = "*"
 pillow = "*"
-"psycopg2-binary" = "*"
 django-filter = "*"
 django-cors-headers = "*"
+"psycopg2" = "*"
+gunicorn = "*"
 
 
 [dev-packages]
@@ -40,3 +40,8 @@ faker = "*"
 [requires]
 
 python_version = "3.6"
+
+
+[pipenv]
+
+keep_outdated = true

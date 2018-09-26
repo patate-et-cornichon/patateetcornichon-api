@@ -26,7 +26,7 @@ class TestStoryViewSet:
         client = APIClient()
         response = client.get(reverse('story:story-list'))
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert len(response.data['results']) == 2
 
     def test_can_access_all_stories_when_staff_user(self):
         StoryFactory.create(published=True)
@@ -44,7 +44,7 @@ class TestStoryViewSet:
         client.login(username=user_data['email'], password=user_data['password'])
         response = client.get(reverse('story:story-list'))
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 3
+        assert len(response.data['results']) == 3
 
     def test_can_create_a_new_story_when_staff_user(self):
         tag_1 = TagFactory.create()
