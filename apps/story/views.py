@@ -4,15 +4,18 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from rest_framework import status
+from rest_framework.mixins import ListModelMixin
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet, ViewSet
 
+from apps.account.models import User
+from apps.account.serializers import UserSerializer
 from common.drf.pagination import StandardResultsSetPagination
 
-from .models import Story
-from .serializers import StoryCreateUpdateSerializer, StoryRetrieveSerializer
+from .models import Story, Tag
+from .serializers import StoryCreateUpdateSerializer, StoryRetrieveSerializer, TagSerializer
 
 
 class StoryViewSet(ModelViewSet):
@@ -42,6 +45,20 @@ class StoryViewSet(ModelViewSet):
         if self.action not in ['retrieve', 'list']:
             return StoryCreateUpdateSerializer
         return StoryRetrieveSerializer
+
+
+class AuthorViewSet(ListModelMixin, GenericViewSet):
+    """ Provide a list view for Author. """
+
+    queryset = User.objects.filter(is_staff=True)
+    serializer_class = UserSerializer
+
+
+class TagViewSet(ListModelMixin, GenericViewSet):
+    """ Provide a list view for Tag. """
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
 class UploadImageViewSet(ViewSet):
