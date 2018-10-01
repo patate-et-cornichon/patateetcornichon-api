@@ -1,5 +1,13 @@
+import uuid
+
+from django import forms
+from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAdminUser
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ViewSet
 
 from common.drf.pagination import StandardResultsSetPagination
 
@@ -34,3 +42,31 @@ class StoryViewSet(ModelViewSet):
         if self.action not in ['retrieve', 'list']:
             return StoryCreateUpdateSerializer
         return StoryRetrieveSerializer
+
+
+class UploadImageViewSet(ViewSet):
+    """ Provide a way to upload image. """
+    permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser]
+
+    def create(self, request, format=None):
+        """ Upload an image and return the URL. """
+        file = request.FILES.get('file')
+
+        # Check if file is a valid image
+        f = forms.ImageField()
+        try:
+            f.clean(file)
+        except ValidationError as err:
+            return Response({'detail': err}, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+        # Generate filename
+        extension = file.name.split('.')[-1]
+        filename = f'{uuid.uuid4()}.{extension}'
+
+        # Save image in media directory
+        path = default_storage.save(f'uploads/{filename}', file)
+
+        # Build URL
+        image_url = request.build_absolute_uri(default_storage.url(path))
+        return Response({'image_url': image_url}, status=status.HTTP_200_OK)
