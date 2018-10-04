@@ -1,5 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 
+from common.drf.pagination import StandardResultsSetPagination
+
 from .filters import CommentFilter
 from .models import Comment
 from .serializers import CommentCreateUpdateSerializer, CommentRetrieveSerializer
@@ -10,6 +12,7 @@ class CommentViewSet(ModelViewSet):
 
     queryset = Comment.objects.all()
     filterset_class = CommentFilter
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         """ Customize the queryset according to the current user. """

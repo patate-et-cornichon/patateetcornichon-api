@@ -21,7 +21,7 @@ class TestCommentViewSet:
         client = APIClient()
         response = client.get(reverse('comment:comment-list'))
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
+        assert len(response.data['results']) == 1
 
     def test_can_access_all_comments_only_when_staff_user(self):
         CommentFactory.create(is_valid=False)
@@ -39,7 +39,7 @@ class TestCommentViewSet:
         client.login(username=user_data['email'], password=user_data['password'])
         response = client.get(reverse('comment:comment-list'))
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 3
+        assert len(response.data['results']) == 3
 
     def test_can_create_a_new_comment(self):
         user_data = {
