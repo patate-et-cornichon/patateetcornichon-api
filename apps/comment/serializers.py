@@ -67,6 +67,7 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
     registered_author = UserSerializer(read_only=True)
     unregistered_author = UnregisteredAuthorSerializer(read_only=True)
     content_type = serializers.SlugRelatedField(slug_field='app_label', read_only=True)
+    commented_object = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -81,6 +82,7 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
             'content',
             'content_type',
             'object_id',
+            'commented_object',
             'children',
         )
         read_only_fields = ('id',)
@@ -92,6 +94,13 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
         request = kwargs['context']['request']
         if 'object_id' not in request.GET:
             self.fields.pop('children')
+
+    def get_commented_object(self, obj):
+        """ Return some commented object data. """
+        return {
+            'full_title': obj.commented_object.full_title,
+            'slug': obj.commented_object.slug,
+        }
 
 
 class CommentCreateUpdateSerializer(serializers.ModelSerializer):

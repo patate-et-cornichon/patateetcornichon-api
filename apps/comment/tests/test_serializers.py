@@ -16,6 +16,7 @@ from apps.comment.serializers import (
     CommentCreateUpdateSerializer, CommentRetrieveSerializer, UnregisteredAuthorSerializer)
 from apps.comment.tests.factories import CommentFactory
 from apps.recipe.tests.factories import RecipeFactory
+from apps.story.tests.factories import StoryFactory
 from common.avatar import generate_avatar_name
 
 
@@ -282,3 +283,25 @@ class TestCommentRetrieveSerializer:
 
         serializer = CommentRetrieveSerializer(context={'request': request})
         assert 'children' not in serializer.fields
+
+    def test_can_return_commented_object_data(self):
+        factory = APIRequestFactory()
+        request = factory.get('/')
+
+        recipe_post = RecipeFactory.create()
+        story_post = StoryFactory.create()
+
+        comment_1 = CommentFactory.create(commented_object=recipe_post)
+        comment_2 = CommentFactory.create(commented_object=story_post)
+
+        serializer = CommentRetrieveSerializer(
+            context={'request': request},
+        )
+        assert serializer.get_commented_object(comment_1) == {
+            'full_title': recipe_post.full_title,
+            'slug': recipe_post.slug,
+        }
+        assert serializer.get_commented_object(comment_2) == {
+            'full_title': story_post.full_title,
+            'slug': story_post.slug,
+        }
