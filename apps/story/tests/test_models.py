@@ -26,18 +26,19 @@ class TestStory:
     def test_can_create_a_story(self):
         tags = TagFactory.create_batch(2)
 
-        story_data = {
-            'title': 'Devenir',
-            'sub_title': 'zéro déchet',
-            'full_title': 'Devenir zéro déchet',
-            'main_picture': SimpleUploadedFile(
-                name='story.jpg',
-                content=open(os.path.join(FIXTURE_ROOT, 'story.jpg'), 'rb').read(),
-                content_type='image/jpeg'
-            ),
-            'content': '<p>C\'est gentil pour la planète.</p>',
-            'meta_description': 'Zéro déchet',
-        }
+        with open(os.path.join(FIXTURE_ROOT, 'story.jpg'), 'rb') as f:
+            story_data = {
+                'title': 'Devenir',
+                'sub_title': 'zéro déchet',
+                'full_title': 'Devenir zéro déchet',
+                'main_picture': SimpleUploadedFile(
+                    name='story.jpg',
+                    content=f.read(),
+                    content_type='image/jpeg'
+                ),
+                'content': '<p>C\'est gentil pour la planète.</p>',
+                'meta_description': 'Zéro déchet',
+            }
         story = Story.objects.create(**story_data)
         story.tags.add(*tags)
         story.authors.add(self.author)

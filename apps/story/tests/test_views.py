@@ -3,6 +3,7 @@ import os
 from base64 import b64encode
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -130,3 +131,72 @@ class TestStoryViewSet:
 
         story = Story.objects.filter(slug=story_data['slug']).first()
         assert story is None
+
+
+@pytest.mark.django_db
+class TestUploadImageViewSet:
+    def test_can_upload_an_image_when_staff(self):
+        user_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+            'first_name': 'Toto',
+        }
+        User.objects.create_superuser(**user_data)
+
+        client = APIClient()
+        client.login(username=user_data['email'], password=user_data['password'])
+
+        with open(os.path.join(FIXTURE_ROOT, 'story.jpg'), 'rb') as f:
+            data = {
+                'file': f,
+            }
+            response = client.post(
+                reverse('story:upload_image-list'),
+                data=data,
+                format='multipart',
+            )
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_cannot_upload_non_image_file(self):
+        user_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+            'first_name': 'Toto',
+        }
+        User.objects.create_superuser(**user_data)
+
+        client = APIClient()
+        client.login(username=user_data['email'], password=user_data['password'])
+
+        file = SimpleUploadedFile('file.mp4', b'File content', content_type='video/mp4')
+        data = {
+            'file': file,
+        }
+        response = client.post(
+            reverse('story:upload_image-list'),
+            data=data,
+            format='multipart',
+        )
+        assert response.status_code == status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+
+    def test_can_not_upload_an_image_when_non_staff(self):
+        user_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+            'first_name': 'Toto',
+        }
+        User.objects.create_user(**user_data)
+
+        client = APIClient()
+        client.login(username=user_data['email'], password=user_data['password'])
+
+        with open(os.path.join(FIXTURE_ROOT, 'story.jpg'), 'rb') as f:
+            data = {
+                'file': f
+            }
+            response = client.post(
+                reverse('story:upload_image-list'),
+                data=data,
+                format='multipart',
+            )
+        assert response.status_code == status.HTTP_403_FORBIDDEN
