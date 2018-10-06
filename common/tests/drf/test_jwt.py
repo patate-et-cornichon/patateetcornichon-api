@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.test import APIRequestFactory
 
 from apps.account.models import User
 from common.drf.jwt import jwt_response_payload_handler
@@ -15,6 +16,8 @@ class TestJwtResponsePayloadHandler:
         }
         user = User.objects.create(**user_data)
 
-        jwt_response = jwt_response_payload_handler(token='test', user=user)
+        factory = APIRequestFactory()
+        request = factory.get('/')
+        jwt_response = jwt_response_payload_handler(token='test', user=user, request=request)
 
         assert jwt_response['user']['id'] == str(user.id)

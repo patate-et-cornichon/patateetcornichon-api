@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.templatetags.static import static
 from rest_framework import serializers
 
 from common.avatar import get_from_gravatar
@@ -8,6 +9,7 @@ from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     """ This serializer is used to interact with user instances. """
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -50,3 +52,15 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
         return super().update(instance, validated_data)
+
+    def get_avatar(self, obj):
+        """ Return the author avatar absolute uri or a default one. """
+        avatar = obj.avatar
+        if avatar:
+            avatar_full_path = avatar.url
+        else:
+            avatar_index = len(obj.email) % 8 + 1
+            avatar_full_path = static(f'comment/avatars/default_avatar_{avatar_index}.svg')
+        request = self.context['request']
+        avatar_absolute_uri = request.build_absolute_uri(avatar_full_path)
+        return avatar_absolute_uri

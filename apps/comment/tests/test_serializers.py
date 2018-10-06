@@ -265,6 +265,23 @@ class TestUnregisteredAuthorSerializer:
         full_avatar_uri = serializer.get_avatar(unregistered_author_data)
         assert full_avatar_uri.endswith(unregistered_author_data['avatar'])
 
+    def test_can_return_a_default_avatar_absolute_uri(self):
+        factory = APIRequestFactory()
+        request = factory.get('/')
+
+        unregistered_author_data = {
+            'email': 'test@test.com',
+            'first_name': 'Test',
+        }
+        serializer = UnregisteredAuthorSerializer(
+            data=unregistered_author_data,
+            context={'request': request},
+        )
+        avatar_index = len(unregistered_author_data['email']) % 8 + 1
+        avatar_name = f'comment/avatars/default_avatar_{avatar_index}.svg'
+
+        assert avatar_name in serializer.get_avatar(unregistered_author_data)
+
 
 @pytest.mark.django_db
 class TestCommentRetrieveSerializer:

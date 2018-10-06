@@ -25,14 +25,18 @@ class UnregisteredAuthorSerializer(serializers.Serializer):
     website = serializers.URLField(required=False, allow_null=True)
 
     def get_avatar(self, obj):
-        """ Return the author avatar absolute uri. """
+        """ Return the author avatar absolute uri or a default one. """
         avatar = obj.get('avatar')
         if avatar:
             fs = DefaultStorage()
-            request = self.context['request']
             avatar_full_path = fs.url(avatar)
-            avatar_absolute_uri = request.build_absolute_uri(avatar_full_path)
-            return avatar_absolute_uri
+        else:
+            avatar_index = len(obj['email']) % 8 + 1
+            avatar_full_path = static(f'comment/avatars/default_avatar_{avatar_index}.svg')
+
+        request = self.context['request']
+        avatar_absolute_uri = request.build_absolute_uri(avatar_full_path)
+        return avatar_absolute_uri
 
 
 class ChildCommentRetrieveSerializer(serializers.ModelSerializer):
