@@ -88,6 +88,7 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
             'object_id',
             'commented_object',
             'children',
+            'parent',
         )
         read_only_fields = ('id',)
 
