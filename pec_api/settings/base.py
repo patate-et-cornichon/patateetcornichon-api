@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-party apps
-    'rest_framework',
-    'django_filters',
     'corsheaders',
+    'django_filters',
+    'rest_framework',
 
     # Projects apps,
     'apps.account',
@@ -91,6 +91,13 @@ DATABASES = {
     'engine': dj_database_url.config(conn_max_age=600),
 }
 
+
+# Algolia configuration
+
+ALGOLIA = {
+    'APPLICATION_ID': os.environ.get('ALGOLIASEARCH_APPLICATION_ID', 'notset'),
+    'API_KEY': os.environ.get('ALGOLIASEARCH_API_KEY', 'notset'),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

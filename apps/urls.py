@@ -11,10 +11,10 @@ urlpatterns = [
     path('', MainView.as_view(), name='main'),
 
     # Apps views
-    path('users', include('apps.account.urls')),
-    path('recipes', include('apps.recipe.urls')),
-    path('stories', include('apps.story.urls')),
-    path('comments', include('apps.comment.urls')),
+    path('users/', include('apps.account.urls')),
+    path('recipes/', include('apps.recipe.urls')),
+    path('stories/', include('apps.story.urls')),
+    path('comments/', include('apps.comment.urls')),
 
     # Auth view
     path('auth/obtain-token/', obtain_jwt_token),

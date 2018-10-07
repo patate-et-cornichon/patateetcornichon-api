@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.forms import model_to_dict
 
 from apps.comment.models import Comment
 from apps.recipe.files import (
@@ -52,6 +53,22 @@ class Recipe(PostModel):
     steps = ArrayField(base_field=models.TextField())
 
     comments = GenericRelation(Comment, related_query_name='recipe')
+
+    @property
+    def tags_list(self):
+        """ Return tags fields in a dictionary. """
+        return [
+            model_to_dict(tag, fields=['slug', 'name'])
+            for tag in self.tags.all()
+        ]
+
+    @property
+    def categories_list(self):
+        """ Return categories fields in a dictionary. """
+        return [
+            model_to_dict(category, fields=['slug', 'name'])
+            for category in self.categories.all()
+        ]
 
 
 class Category(SlugModel):

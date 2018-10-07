@@ -10,6 +10,7 @@ from .base import *  # noqa: F403
 # Application definition
 
 INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
+    'algoliasearch_django',
     'raven.contrib.django.raven_compat',
     'storages',
 ]

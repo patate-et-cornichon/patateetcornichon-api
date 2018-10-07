@@ -10,3 +10,4 @@ omit =
     *pec_api*
     *manage.py*
     *apps.py*
+    *index.py*

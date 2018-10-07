@@ -31,6 +31,21 @@ superuser:
 	pipenv run python manage.py createsuperuser --settings=$(DJANGO_SETTINGS_MODULE)
 
 
+# INDEXING
+# ~~~~~~~~
+# The following rules can be used to check manage Algolia indexing.
+# --------------------------------------------------------------------------------------------------
+
+algolia_reindex:
+	pipenv run python manage.py algolia_reindex --settings=$(DJANGO_SETTINGS_MODULE)
+
+algolia_applysettings:
+	pipenv run python manage.py algolia_applysettings --settings=$(DJANGO_SETTINGS_MODULE)
+
+algolia_clearindex:
+	pipenv run python manage.py algolia_clearindex --settings=$(DJANGO_SETTINGS_MODULE)
+
+
 # QUALITY ASSURANCE
 # ~~~~~~~~~~~~~~~~~
 # The following rules can be used to check code quality, import sorting, etc.

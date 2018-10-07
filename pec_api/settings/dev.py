@@ -7,6 +7,13 @@ import django_heroku
 from .base import *  # noqa: F403 F401
 
 
+# Application definition
+
+INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
+    'algoliasearch_django',
+]
+
+
 # Security configuration
 
 DEBUG = True

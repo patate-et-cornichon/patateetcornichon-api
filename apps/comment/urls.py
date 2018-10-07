@@ -11,5 +11,5 @@ router.register(r'', CommentViewSet, base_name='comment')
 
 app_name = 'comment'
 urlpatterns = [
-    path('/', include(router.urls)),
+    path('', include(router.urls)),
 ]

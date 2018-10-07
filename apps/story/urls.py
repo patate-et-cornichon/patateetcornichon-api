@@ -14,5 +14,5 @@ router.register(r'', StoryViewSet, base_name='story')
 
 app_name = 'story'
 urlpatterns = [
-    path('/', include(router.urls)),
+    path('', include(router.urls)),
 ]
