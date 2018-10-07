@@ -28,6 +28,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATICFILES_STORAGE
 DEFAULT_FILE_STORAGE = 'pec_api.storage.OverwriteStorage'
+THUMBNAIL_DEFAULT_STORAGE = 'pec_api.storage.OverwriteStorage'
 
 
 # Email settings

@@ -37,6 +37,7 @@ STATICFILES_STORAGE = 'pec_api.storage.StaticRootS3BotoStorage'
 
 # See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-STATICFILES_STORAGE
 DEFAULT_FILE_STORAGE = 'pec_api.storage.MediaRootS3BotoStorage'
+THUMBNAIL_DEFAULT_STORAGE = 'pec_api.storage.MediaRootS3BotoStorage'
 
 
 # Email settings
