@@ -244,7 +244,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                     if unit_name is not None:
                         unit, _ = Unit.objects.get_or_create(
                             name__iexact=unit_name,
-                            defaults={'name': unit_name.lower()},
+                            defaults={'name': unit_name},
                         )
 
                     recipe_ingredient = RecipeIngredient.objects.create(
