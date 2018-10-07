@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'corsheaders',
     'django_filters',
+    'easy_thumbnails',
     'rest_framework',
 
     # Projects apps,

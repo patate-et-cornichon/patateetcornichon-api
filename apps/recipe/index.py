@@ -12,7 +12,7 @@ class RecipeIndex(AlgoliaIndex):
     fields = (
         'slug',
         'full_title',
-        'main_picture',
+        'main_picture_thumbs',
         'created',
         'tags_list',
         'categories_list',

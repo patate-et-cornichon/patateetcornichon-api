@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from easy_thumbnails.files import get_thumbnailer
 
 
 class DatedModel(models.Model):
@@ -50,3 +51,22 @@ class PostModel(SlugModel, DatedModel):
 
     def __str__(self):
         return self.full_title
+
+    @property
+    def main_picture(self):
+        """ Main picture must be implemented. """
+        raise NotImplementedError
+
+    @property
+    def main_picture_thumbs(self):
+        """ Return cropped main picture with different sizes. """
+        sizes = {
+            'small': {'size': (80, 50), 'crop': True},
+            'medium': {'size': (650, 455), 'crop': True},
+            'large': {'size': (1090, 730), 'crop': True},
+        }
+        thumbnailer = get_thumbnailer(self.main_picture)
+        return {
+            name: thumbnailer.get_thumbnail(value).url for
+            name, value in sizes.items()
+        }

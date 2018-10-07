@@ -162,6 +162,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 class RecipeRetrieveSerializer(BaseRecipeSerializer):
     """ This serializer is used to retrieve Recipe instances. """
 
+    main_picture = serializers.SerializerMethodField()
     categories = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
@@ -173,6 +174,10 @@ class RecipeRetrieveSerializer(BaseRecipeSerializer):
         """ Return the number of comments associated to the recipe. """
         comments = Comment.objects.filter(object_id=obj.id)
         return comments.count()
+
+    def get_main_picture(self, obj):
+        """ Return the main picture large thumbnail. """
+        return obj.main_picture_thumbs['large']
 
 
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
