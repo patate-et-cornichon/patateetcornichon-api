@@ -2,7 +2,11 @@
 Django testing settings for Patate & Cornichon API project.
 """
 
+import os
+
 import django_heroku
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .base import *  # noqa: F403
 
@@ -11,7 +15,6 @@ from .base import *  # noqa: F403
 
 INSTALLED_APPS = INSTALLED_APPS + [  # noqa F405
     'algoliasearch_django',
-    'raven.contrib.django.raven_compat',
     'storages',
 ]
 
@@ -27,6 +30,15 @@ SECURE_SSL_REDIRECT = True
 CORS_ORIGIN_WHITELIST = (
     'testing-admin.patateetcornichon.com',
     'localhost:4200',
+)
+
+
+# Sentry Configuration
+
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_DSN', 'notset'),
+    integrations=[DjangoIntegration()],
+    send_default_pii=True,
 )
 
 

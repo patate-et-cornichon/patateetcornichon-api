@@ -11,7 +11,6 @@ django = "*"
 django-heroku = "*"
 djangorestframework = "*"
 dj-database-url = "*"
-raven = "*"
 django-storages = "*"
 "boto3" = "*"
 djangorestframework-jwt = "*"
@@ -23,6 +22,7 @@ django-cors-headers = "*"
 gunicorn = "*"
 algoliasearch-django = "*"
 easy-thumbnails = "*"
+sentry-sdk = "*"
 
 
 [dev-packages]
