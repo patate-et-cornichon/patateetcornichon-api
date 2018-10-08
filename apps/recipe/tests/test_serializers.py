@@ -6,9 +6,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe, RecipeIngredient
 from apps.recipe.serializers import (
-    RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer, RecipeRetrieveSerializer)
+    RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer,
+    RecipeRetrieveSerializer)
 from apps.recipe.tests.factories import (
-    CategoryFactory, RecipeIngredientFactory, TagFactory, UnitFactory, RecipeFactory)
+    CategoryFactory, RecipeFactory, RecipeIngredientFactory, TagFactory, UnitFactory)
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')

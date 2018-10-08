@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms import model_to_dict
 
 from apps.recipe.models import Recipe
-from apps.recipe.tests.factories import RecipeCompositionFactory, TagFactory, RecipeFactory
+from apps.recipe.tests.factories import RecipeCompositionFactory, RecipeFactory, TagFactory
 
 from .factories import CategoryFactory
 
