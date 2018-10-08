@@ -73,7 +73,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     """ This serializer is used to interact with recipe ingredients instances. """
 
     ingredient = serializers.CharField(max_length=255)
-    unit = serializers.CharField(max_length=255, required=False, allow_null=True)
+    unit = serializers.CharField(max_length=255, required=False, allow_null=True, allow_blank=True)
 
     class Meta:
         model = RecipeIngredient
@@ -256,7 +256,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                     # Ingredient Unit management
                     unit_name = recipe_ingredient_item.get('unit')
                     unit = None
-                    if unit_name is not None:
+                    if unit_name:
                         unit, _ = Unit.objects.get_or_create(
                             name__iexact=unit_name,
                             defaults={'name': unit_name},
