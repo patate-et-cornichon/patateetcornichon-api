@@ -132,10 +132,6 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
             'sub_title',
             'full_title',
 
-            # Pictures
-            'main_picture',
-            'secondary_picture',
-
             # Recipe meta
             'goal',
             'preparation_time',
@@ -162,22 +158,30 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 class RecipeRetrieveSerializer(BaseRecipeSerializer):
     """ This serializer is used to retrieve Recipe instances. """
 
-    main_picture = serializers.SerializerMethodField()
+    main_picture_thumbs = serializers.SerializerMethodField()
     categories = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
 
     class Meta(BaseRecipeSerializer.Meta):
-        fields = BaseRecipeSerializer.Meta.fields + ('comments_count',)
+        fields = BaseRecipeSerializer.Meta.fields + (
+            'comments_count',
+            'main_picture_thumbs',
+            'secondary_picture_thumbs',
+        )
 
     def get_comments_count(self, obj):
         """ Return the number of comments associated to the recipe. """
         comments = Comment.objects.filter(object_id=obj.id)
         return comments.count()
 
-    def get_main_picture(self, obj):
+    def get_main_picture_thumbs(self, obj):
         """ Return the main picture large thumbnail. """
-        return obj.main_picture_thumbs['large']
+        return obj.main_picture_thumbs
+
+    def get_secondary_picture_thumbs(self, obj):
+        """ Return the secondary picture large thumbnail. """
+        return obj.secondary_picture_thumbs
 
 
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
@@ -201,6 +205,12 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
         'steps_required': 'At least one step is required.',
         'composition_required': 'At least one composition is required.',
     }
+
+    class Meta(BaseRecipeSerializer.Meta):
+        fields = BaseRecipeSerializer.Meta.fields + (
+            'main_picture',
+            'secondary_picture',
+        )
 
     def validate_steps(self, value):
         """ At least one step is required. """

@@ -61,10 +61,11 @@ class PostModel(SlugModel, DatedModel):
     def main_picture_thumbs(self):
         """ Return cropped main picture with different sizes. """
         sizes = {
-            'small': {'size': (80, 50), 'crop': True},
+            'mini': {'size': (80, 50), 'crop': True},
             'medium': {'size': (650, 455), 'crop': True},
             'large': {'size': (1090, 730), 'crop': True},
         }
+
         thumbnailer = get_thumbnailer(self.main_picture)
         return {
             name: thumbnailer.get_thumbnail(value).url for

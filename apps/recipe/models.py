@@ -2,6 +2,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.forms import model_to_dict
+from easy_thumbnails.files import get_thumbnailer
 
 from apps.comment.models import Comment
 from apps.recipe.files import (
@@ -69,6 +70,22 @@ class Recipe(PostModel):
             model_to_dict(category, fields=['slug', 'name'])
             for category in self.categories.all()
         ]
+
+    @property
+    def secondary_picture_thumbs(self):
+        """ Return cropped secondary picture with different sizes. """
+        if self.secondary_picture:
+            sizes = {
+                'medium': {'size': (650, 455), 'crop': True},
+                'large': {'size': (1090, 730), 'crop': True},
+            }
+
+            thumbnailer = get_thumbnailer(self.secondary_picture)
+            return {
+                name: thumbnailer.get_thumbnail(value).url for
+                name, value in sizes.items()
+            }
+        return None
 
 
 class Category(SlugModel):
