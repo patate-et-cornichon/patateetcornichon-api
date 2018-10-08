@@ -80,6 +80,7 @@ class StoryRetrieveSerializer(BaseStorySerializer):
 class StoryCreateUpdateSerializer(BaseStorySerializer):
     """ This serializer is used to create or update Story instances. """
 
+    created = serializers.DateTimeField(required=False)
     main_picture = Base64ImageField(max_length=None, write_only=True)
     tags = serializers.ListField(
         child=serializers.CharField(max_length=255),
