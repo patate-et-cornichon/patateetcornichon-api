@@ -50,7 +50,7 @@ class BaseStorySerializer(serializers.ModelSerializer):
             # SEO
             'meta_description',
         )
-        read_only_fields = ('id', 'created', 'updated')
+        read_only_fields = ('id', 'updated')
 
 
 class StoryRetrieveSerializer(BaseStorySerializer):
