@@ -187,7 +187,6 @@ class RecipeRetrieveSerializer(BaseRecipeSerializer):
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
     """ This serializer is used to create or update Recipe instances. """
 
-    created = serializers.DateTimeField(required=False)
     main_picture = Base64ImageField(max_length=None, write_only=True)
     secondary_picture = Base64ImageField(
         max_length=None,

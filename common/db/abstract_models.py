@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils import timezone
 from easy_thumbnails.files import get_thumbnailer
 
 
@@ -10,7 +11,7 @@ class DatedModel(models.Model):
         creation date and last updated date.
     """
 
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
