@@ -2,8 +2,10 @@ import os
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.forms import model_to_dict
 
 from apps.account.models import User
+from apps.story.tests.factories import StoryFactory
 
 from ..models import Story
 from .factories import TagFactory
@@ -54,3 +56,14 @@ class TestStory:
         # Check relative models
         assert list(story.tags.all()) == tags
         assert story.authors.all()[0] == self.author
+
+    def test_can_return_tags_list(self):
+        tags = TagFactory.create_batch(2)
+
+        story = StoryFactory.create()
+        story.tags.add(*tags)
+
+        assert story.tags_list == [
+            model_to_dict(tag, fields=['slug', 'name'])
+            for tag in tags
+        ]

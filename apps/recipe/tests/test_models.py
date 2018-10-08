@@ -2,9 +2,10 @@ import os
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.forms import model_to_dict
 
 from apps.recipe.models import Recipe
-from apps.recipe.tests.factories import RecipeCompositionFactory
+from apps.recipe.tests.factories import RecipeCompositionFactory, TagFactory, RecipeFactory
 
 from .factories import CategoryFactory
 
@@ -51,3 +52,38 @@ class TestRecipe:
         # Check relative models
         assert list(recipe.categories.all()) == categories
         assert list(recipe.composition.all()) == composition
+
+    def test_can_return_tags_list(self):
+        tags = TagFactory.create_batch(2)
+
+        recipe = RecipeFactory.create()
+        recipe.tags.add(*tags)
+
+        assert recipe.tags_list == [
+            model_to_dict(tag, fields=['slug', 'name'])
+            for tag in tags
+        ]
+
+    def test_can_return_categories_list(self):
+        categories = CategoryFactory.create_batch(2)
+
+        recipe = RecipeFactory.create()
+        recipe.categories.add(*categories)
+
+        assert recipe.categories_list == [
+            model_to_dict(category, fields=['slug', 'name'])
+            for category in categories
+        ]
+
+    def test_can_return_thumbnails(self):
+        recipe = RecipeFactory.create()
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as f:
+            recipe.secondary_picture = SimpleUploadedFile(
+                name='recipe.jpg',
+                content=f.read(),
+                content_type='image/jpeg'
+            )
+            recipe.save()
+
+        assert 'medium' in recipe.secondary_picture_thumbs.keys()
+        assert 'large' in recipe.secondary_picture_thumbs.keys()

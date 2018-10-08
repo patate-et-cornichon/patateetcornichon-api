@@ -6,12 +6,30 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.recipe.models import Recipe, RecipeIngredient
 from apps.recipe.serializers import (
-    RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer)
+    RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer, RecipeRetrieveSerializer)
 from apps.recipe.tests.factories import (
-    CategoryFactory, RecipeIngredientFactory, TagFactory, UnitFactory)
+    CategoryFactory, RecipeIngredientFactory, TagFactory, UnitFactory, RecipeFactory)
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
+
+
+@pytest.mark.django_db
+class TestRecipeRetrieveSerializer:
+    def test_can_return_secondary_picture(self):
+        recipe = RecipeFactory.create()
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as f:
+            recipe.secondary_picture = SimpleUploadedFile(
+                name='recipe.jpg',
+                content=f.read(),
+                content_type='image/jpeg'
+            )
+            recipe.save()
+
+        serializer = RecipeRetrieveSerializer()
+
+        assert 'medium' in serializer.get_secondary_picture_thumbs(recipe)
+        assert 'large' in serializer.get_secondary_picture_thumbs(recipe)
 
 
 @pytest.mark.django_db
