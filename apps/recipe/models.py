@@ -127,7 +127,7 @@ class RecipeIngredient(models.Model):
     """ An Ingredient is defined by its name, optional quantity and optional unit. """
 
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField(null=True, blank=True)
+    quantity = models.FloatField(null=True, blank=True)
     unit = models.ForeignKey(
         'Unit', null=True, blank=True, on_delete=models.SET_NULL, related_name='+',
     )
