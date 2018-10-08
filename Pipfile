@@ -23,6 +23,7 @@ gunicorn = "*"
 algoliasearch-django = "*"
 easy-thumbnails = "*"
 sentry-sdk = "*"
+python-magic = "*"
 
 
 [dev-packages]
