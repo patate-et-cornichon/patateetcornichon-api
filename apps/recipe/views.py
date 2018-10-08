@@ -47,7 +47,7 @@ class RecipeSearchView(APIView):
 
     def get(self, request, format=None):
         """
-        Return a list of all users.
+        Return a list of all indexed recipes.
         """
         query_params = request.query_params.copy()
         query = query_params.pop('query', [''])[0]

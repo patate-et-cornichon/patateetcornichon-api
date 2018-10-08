@@ -1,12 +1,12 @@
 from algoliasearch_django import AlgoliaIndex
 from algoliasearch_django.decorators import register
 
-from .models import Recipe
+from .models import Story
 
 
-@register(Recipe)
-class RecipeIndex(AlgoliaIndex):
-    """ Index representing published recipe. """
+@register(Story)
+class StoryIndex(AlgoliaIndex):
+    """ Index representing published story. """
 
     should_index = 'published'
     fields = (
@@ -15,12 +15,15 @@ class RecipeIndex(AlgoliaIndex):
         'main_picture_thumbs',
         'created',
         'tags_list',
-        'categories_list',
+        'content',
     )
     settings = {
         'searchableAttributes': [
             'full_title',
             'tags_list',
-            'categories_list',
+            'content',
         ],
+        'unretrievableAttributes': [
+            'content',
+        ]
     }

@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.forms import model_to_dict
 
 from apps.comment.models import Comment
 from apps.story.files import story_main_picture_directory_path
@@ -22,6 +23,14 @@ class Story(PostModel):
     authors = models.ManyToManyField('account.User', related_name='stories')
 
     comments = GenericRelation(Comment, related_query_name='story')
+
+    @property
+    def tags_list(self):
+        """ Return tags fields in a dictionary. """
+        return [
+            model_to_dict(tag, fields=['slug', 'name'])
+            for tag in self.tags.all()
+        ]
 
 
 class Tag(SlugModel):

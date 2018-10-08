@@ -38,9 +38,6 @@ class BaseStorySerializer(serializers.ModelSerializer):
             'sub_title',
             'full_title',
 
-            # Picture
-            'main_picture',
-
             # Tags
             'tags',
 
@@ -59,17 +56,25 @@ class BaseStorySerializer(serializers.ModelSerializer):
 class StoryRetrieveSerializer(BaseStorySerializer):
     """ This serializer is used to retrieve Story instances. """
 
+    main_picture_thumbs = serializers.SerializerMethodField()
     authors = UserSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
 
     class Meta(BaseStorySerializer.Meta):
-        fields = BaseStorySerializer.Meta.fields + ('comments_count',)
+        fields = BaseStorySerializer.Meta.fields + (
+            'comments_count',
+            'main_picture_thumbs',
+        )
 
     def get_comments_count(self, obj):
         """ Return the number of comments associated to the recipe. """
         comments = Comment.objects.filter(object_id=obj.id)
         return comments.count()
+
+    def get_main_picture_thumbs(self, obj):
+        """ Return the main picture large thumbnail. """
+        return obj.main_picture_thumbs
 
 
 class StoryCreateUpdateSerializer(BaseStorySerializer):
@@ -80,6 +85,11 @@ class StoryCreateUpdateSerializer(BaseStorySerializer):
         child=serializers.CharField(max_length=255),
         write_only=True,
     )
+
+    class Meta(BaseStorySerializer.Meta):
+        fields = BaseStorySerializer.Meta.fields + (
+            'main_picture',
+        )
 
     @transaction.atomic
     def save(self, **kwargs):
