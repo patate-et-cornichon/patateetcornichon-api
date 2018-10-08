@@ -181,7 +181,7 @@ AUTH_USER_MODEL = 'account.User'
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': timedelta(hours=1),
+    'JWT_EXPIRATION_DELTA': timedelta(days=2),
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'common.drf.jwt.jwt_response_payload_handler',
 }
