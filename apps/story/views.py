@@ -1,6 +1,5 @@
 import uuid
 
-from algoliasearch_django import raw_search
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
@@ -9,7 +8,6 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ViewSet
 
 from apps.account.models import User
@@ -47,23 +45,6 @@ class StoryViewSet(ModelViewSet):
         if self.action not in ['retrieve', 'list']:
             return StoryCreateUpdateSerializer
         return StoryRetrieveSerializer
-
-
-class StorySearchView(APIView):
-    """ Provide a search endpoint for indexed stories. """
-
-    def get(self, request, format=None):
-        """
-        Return a list of all indexed stories.
-        """
-        query_params = request.query_params.copy()
-        query = query_params.pop('query', [''])[0]
-        response = raw_search(
-            model=Story,
-            query=query,
-            params=query_params,
-        )
-        return Response(response)
 
 
 class AuthorViewSet(ListModelMixin, GenericViewSet):

@@ -3,8 +3,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (
-    CategoryViewSet, IngredientViewSet, RecipeSearchView, RecipeViewSet, TagViewSet, UnitViewSet)
+from .views import CategoryViewSet, IngredientViewSet, RecipeViewSet, TagViewSet, UnitViewSet
 
 
 router = DefaultRouter()
@@ -16,6 +15,5 @@ router.register(r'', RecipeViewSet, base_name='recipe')
 
 app_name = 'recipe'
 urlpatterns = [
-    path('search/', RecipeSearchView.as_view(), name='recipe_search'),
     path('', include(router.urls)),
 ]

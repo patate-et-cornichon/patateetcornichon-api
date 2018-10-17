@@ -11,6 +11,8 @@ class RecipeIndex(AlgoliaIndex):
     should_index = 'published'
     fields = (
         'slug',
+        'title',
+        'sub_title',
         'full_title',
         'main_picture_thumbs',
         'created',

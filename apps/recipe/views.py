@@ -1,8 +1,5 @@
-from algoliasearch_django import raw_search
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import AllowAny, IsAdminUser
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from common.drf.pagination import StandardResultsSetPagination
@@ -40,23 +37,6 @@ class RecipeViewSet(ModelViewSet):
         if self.action not in ['retrieve', 'list']:
             return RecipeCreateUpdateSerializer
         return RecipeRetrieveSerializer
-
-
-class RecipeSearchView(APIView):
-    """ Provide a search endpoint for indexed recipes. """
-
-    def get(self, request, format=None):
-        """
-        Return a list of all indexed recipes.
-        """
-        query_params = request.query_params.copy()
-        query = query_params.pop('query', [''])[0]
-        response = raw_search(
-            model=Recipe,
-            query=query,
-            params=query_params,
-        )
-        return Response(response)
 
 
 class CategoryViewSet(ListModelMixin, GenericViewSet):
