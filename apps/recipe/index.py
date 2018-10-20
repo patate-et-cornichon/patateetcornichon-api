@@ -25,4 +25,8 @@ class RecipeIndex(AlgoliaIndex):
             'tags_list',
             'categories_list',
         ],
+        'attributesForFaceting': [
+            'categories_list.slug',
+            'tags_list.slug',
+        ],
     }
