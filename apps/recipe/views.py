@@ -1,3 +1,5 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
@@ -15,6 +17,9 @@ class RecipeViewSet(ModelViewSet):
 
     queryset = Recipe.objects.all()
     lookup_field = 'slug'
+    filter_backends = (DjangoFilterBackend, OrderingFilter,)
+    filter_fields = ('categories__slug',)
+    ordering_fields = ('created', 'views', '?',)
     pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):

@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from rest_framework import status
+from rest_framework.filters import OrderingFilter
 from rest_framework.mixins import ListModelMixin
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -23,6 +24,8 @@ class StoryViewSet(ModelViewSet):
 
     queryset = Story.objects.all()
     lookup_field = 'slug'
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('created',)
     pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
