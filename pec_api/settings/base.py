@@ -161,6 +161,7 @@ EMAIL_USE_TLS = strtobool(os.environ.get('EMAIL_USE_TLS', 'True'))
 # Django Rest Framework Configuration
 
 REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%s',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
