@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # Projects apps,
     'apps.account',
+    'apps.basic',
     'apps.comment',
     'apps.recipe',
     'apps.story',
@@ -197,3 +198,8 @@ AWS_QUERYSTRING_AUTH = False
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
+
+
+# Social Settings
+
+INSTAGRAM_ACCESS_TOKEN = os.environ.get('INSTAGRAM_ACCESS_TOKEN', 'notset')

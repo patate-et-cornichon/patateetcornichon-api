@@ -11,6 +11,7 @@ urlpatterns = [
     path('', MainView.as_view(), name='main'),
 
     # Apps views
+    path('basic/', include('apps.basic.urls')),
     path('users/', include('apps.account.urls')),
     path('recipes/', include('apps.recipe.urls')),
     path('stories/', include('apps.story.urls')),
