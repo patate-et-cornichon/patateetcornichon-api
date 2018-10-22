@@ -63,6 +63,11 @@ DEFAULT_FROM_EMAIL = 'Patate & Cornichon <noreply@testing.patateetcornichon.com>
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRenderer',)  # noqa: F405 E501
 
 
+# AWS Settings
+
+AWS_S3_CUSTOM_DOMAIN = 'prod-cdn.patateetcornichon.com'
+
+
 # Heroku Configuration
 
 django_heroku.settings(locals(), staticfiles=False, test_runner=False, logging=False)
