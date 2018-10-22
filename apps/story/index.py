@@ -8,6 +8,7 @@ from .models import Story
 class StoryIndex(AlgoliaIndex):
     """ Index representing published story. """
 
+    index_name = 'story'
     should_index = 'published'
     fields = (
         'slug',
@@ -30,5 +31,9 @@ class StoryIndex(AlgoliaIndex):
         ],
         'attributesForFaceting': [
             'tags_list.slug',
+        ],
+        'replicas': [
+            'story_created_asc',
+            'story_created_desc',
         ],
     }

@@ -8,6 +8,7 @@ from .models import Recipe
 class RecipeIndex(AlgoliaIndex):
     """ Index representing published recipe. """
 
+    index_name = 'recipe'
     should_index = 'published'
     fields = (
         'slug',
@@ -28,5 +29,9 @@ class RecipeIndex(AlgoliaIndex):
         'attributesForFaceting': [
             'categories_list.slug',
             'tags_list.slug',
+        ],
+        'replicas': [
+            'recipe_created_asc',
+            'recipe_created_desc',
         ],
     }
