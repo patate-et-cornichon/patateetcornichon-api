@@ -15,6 +15,7 @@ class RecipeIndex(AlgoliaIndex):
         'title',
         'sub_title',
         'full_title',
+        'introduction',
         'main_picture_thumbs',
         'created',
         'tags_list',
