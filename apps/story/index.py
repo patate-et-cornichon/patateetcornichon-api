@@ -17,6 +17,7 @@ class StoryIndex(AlgoliaIndex):
         'full_title',
         'main_picture_thumbs',
         'created',
+        'comments_count',
         'tags_list',
         'content',
     )

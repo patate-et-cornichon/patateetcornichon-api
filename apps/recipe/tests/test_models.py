@@ -87,3 +87,10 @@ class TestRecipe:
 
         assert 'medium' in recipe.secondary_picture_thumbs.keys()
         assert 'large' in recipe.secondary_picture_thumbs.keys()
+
+    def test_can_return_total_time(self):
+        recipe = RecipeFactory.create(
+            preparation_time=20,
+            cooking_time=30,
+        )
+        assert recipe.total_time == 50

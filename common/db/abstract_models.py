@@ -72,3 +72,9 @@ class PostModel(SlugModel, DatedModel):
             name: thumbnailer.get_thumbnail(value).url for
             name, value in sizes.items()
         }
+
+    @property
+    def comments_count(self):
+        """ Return the count of comments linked to the instance. """
+        from apps.comment.models import Comment
+        return Comment.objects.filter(object_id=self.id).count()

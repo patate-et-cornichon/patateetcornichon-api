@@ -18,6 +18,8 @@ class RecipeIndex(AlgoliaIndex):
         'introduction',
         'main_picture_thumbs',
         'created',
+        'comments_count',
+        'total_time',
         'tags_list',
         'categories_list',
     )

@@ -87,6 +87,10 @@ class Recipe(PostModel):
             }
         return None
 
+    @property
+    def total_time(self):
+        return self.preparation_time + (self.cooking_time or 0)
+
 
 class Category(SlugModel):
     """ This Category model is referenced inside the Recipe model. """
