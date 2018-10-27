@@ -137,6 +137,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
             'cooking_time',
             'fridge_time',
             'leavening_time',
+            'total_time',
             'difficulty',
 
             # Categories and tags
