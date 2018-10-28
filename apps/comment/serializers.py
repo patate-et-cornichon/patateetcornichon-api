@@ -22,7 +22,7 @@ class UnregisteredAuthorSerializer(serializers.Serializer):
     email = serializers.EmailField()
     first_name = serializers.CharField(max_length=255)
     avatar = serializers.SerializerMethodField()
-    website = serializers.URLField(required=False, allow_null=True)
+    website = serializers.URLField(required=False, allow_null=True, allow_blank=True)
 
     def get_avatar(self, obj):
         """ Return the author avatar absolute uri or a default one. """
