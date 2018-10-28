@@ -7,6 +7,7 @@ from django.conf import settings as settings
 from django.contrib.auth.models import AnonymousUser
 from django.core import mail
 from django.core.files.base import ContentFile
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.test import APIRequestFactory
 
@@ -300,6 +301,32 @@ class TestCommentRetrieveSerializer:
 
         serializer = CommentRetrieveSerializer(context={'request': request})
         assert 'children' not in serializer.fields
+
+    def test_can_returns_children_ordered_data(self):
+        factory = APIRequestFactory()
+        request = factory.get('/')
+
+        recipe_post = RecipeFactory.create()
+
+        parent_comment = CommentFactory.create(commented_object=recipe_post)
+        child_comment_1 = CommentFactory.create(
+            commented_object=recipe_post,
+            parent=parent_comment,
+            created=timezone.now() - timezone.timedelta(),
+            is_valid=True,
+        )
+        child_comment_2 = CommentFactory.create(
+            commented_object=recipe_post,
+            parent=parent_comment,
+            created=timezone.now() - timezone.timedelta(hours=2),
+            is_valid=True,
+        )
+
+        serializer = CommentRetrieveSerializer(
+            context={'request': request},
+        )
+        serializer_data_ids = [str(c['id']) for c in serializer.get_children(parent_comment)]
+        assert serializer_data_ids == [str(child_comment_2.id), str(child_comment_1.id)]
 
     def test_can_return_commented_object_data(self):
         factory = APIRequestFactory()

@@ -67,7 +67,7 @@ class ChildCommentRetrieveSerializer(serializers.ModelSerializer):
 class CommentRetrieveSerializer(serializers.ModelSerializer):
     """ This serializer is used to interact with Comment instances. """
 
-    children = ChildCommentRetrieveSerializer(many=True, read_only=True, default=[])
+    children = serializers.SerializerMethodField()
     registered_author = UserSerializer(read_only=True)
     unregistered_author = UnregisteredAuthorSerializer(read_only=True)
     content_type = serializers.SlugRelatedField(slug_field='app_label', read_only=True)
@@ -106,6 +106,18 @@ class CommentRetrieveSerializer(serializers.ModelSerializer):
             'full_title': obj.commented_object.full_title,
             'slug': obj.commented_object.slug,
         }
+
+    def get_children(self, instance):
+        """ Returns serialized children with a different order than the model. """
+        children = instance.children.filter(is_valid=True).order_by('created')
+        serializer = ChildCommentRetrieveSerializer(
+            children,
+            many=True,
+            read_only=True,
+            default=[],
+            context=self.context,
+        )
+        return serializer.data
 
 
 class CommentCreateUpdateSerializer(serializers.ModelSerializer):
