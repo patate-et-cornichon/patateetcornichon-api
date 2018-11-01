@@ -35,6 +35,7 @@ THUMBNAIL_DEFAULT_STORAGE = 'pec_api.storage.OverwriteStorage'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = 'Patate & Cornichon <noreply@testing.patateetcornichon.com>'
+EMAIL_STAFF_CONTACT = 'developer@patateetcornichon.com'
 
 
 # Heroku Configuration

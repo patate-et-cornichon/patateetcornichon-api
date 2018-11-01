@@ -1,11 +1,44 @@
 import requests
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from requests.auth import HTTPBasicAuth
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import MailChimpSerializer
+from .serializers import ContactSerializer, MailChimpSerializer
+
+
+class ContactView(APIView):
+    """ View used to contact staff. """
+
+    def post(self, request, format=None):
+        """ Send an email to staff. """
+        serializer = ContactSerializer(data=request.data)
+
+        if serializer.is_valid():
+            contact = serializer.data
+
+            html_content = render_to_string('contact/contact.html', {
+                'request': request,
+                'contact': contact,
+            })
+            text_content = strip_tags(html_content)
+
+            msg = EmailMultiAlternatives(
+                subject=contact['subject'],
+                body=text_content,
+                to=(settings.EMAIL_STAFF_CONTACT, ),
+                reply_to=(contact['email'], ),
+            )
+            msg.attach_alternative(html_content, 'text/html')
+            msg.send(fail_silently=True)
+
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InstagramView(APIView):

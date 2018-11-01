@@ -1,0 +1,77 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{ contact.subject }}</mj-title>
+    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto:300,500"></mj-font>
+    <mj-attributes>
+      <mj-all font-family="Roboto, Helvetica, sans-serif"></mj-all>
+      <mj-text font-weight="300" font-size="16px" color="#616161" line-height="24px"></mj-text>
+      <mj-section padding="0px"></mj-section>
+    </mj-attributes>
+    <mj-style inline="inline">
+      .link-nostyle { color: inherit; text-decoration: none }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section padding="20px 0">
+      <mj-column width="100%">
+        <mj-text font-size="10px">Celui qui mange vite va vite à sa tombe.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="250px">
+        <mj-text>
+          {% load absolute_uri %}
+        </mj-text>
+        <mj-image href="https://patateetcornichon.com" src="{% absolute_uri_static 'img/logo.jpg' %}"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section padding-top="20px">
+      <mj-column width="100%">
+        <mj-text font-weight="500" padding="0px" font-size="18px">
+          Message de {{ contact.name }}
+        </mj-text>
+        <mj-text padding="0px" font-size="14px">
+          Email : {{ contact.email }}
+        </mj-text>
+        <mj-text padding="0px" font-size="14px">
+          Sujet : {{ contact.subject }}
+        </mj-text>
+      </mj-column>
+      <mj-column width="100%">
+        <mj-text padding="20px 0">
+          {{ contact.content|linebreaks }}
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="100%">
+        <mj-divider border-width="1px" border-color="#E0E0E0"></mj-divider>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column width="60%">
+        <mj-text>
+          <a href="https://patateetcornichon.com" class="link-nostyle">patateetcornichon.com</a>
+        </mj-text>
+      </mj-column>
+      <mj-column width="35%">
+        <mj-table>
+          <tr style="list-style: none;line-height:1">
+            <td> <a href="https://www.facebook.com/patate.et.cornichon.cuisine.vegetale/">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/facebook.png' %}" />
+                </a> </td>
+            <td> <a href="https://www.instagram.com/patateetcornichon/">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/instagram.png' %}" />
+                </a> </td>
+            <td> <a href="https://twitter.com/PeC_cooking">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/twitter.png' %}" />
+                </a> </td>
+            <td> <a href="https://www.youtube.com/c/PatateetcornichonFr-cooking">
+                  <img width="25" src="{% absolute_uri_static 'img/emails/social/youtube.png' %}" />
+                </a> </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
