@@ -204,3 +204,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 # Social Settings
 
 INSTAGRAM_ACCESS_TOKEN = os.environ.get('INSTAGRAM_ACCESS_TOKEN', 'notset')
+
+MAILCHIMP_USERNAME = os.environ.get('MAILCHIMP_USERNAME', 'notset')
+MAILCHIMP_LIST_ID = os.environ.get('MAILCHIMP_LIST_ID', 'notset')
+MAILCHIMP_API_KEY = os.environ.get('MAILCHIMP_API_KEY', 'notset')
