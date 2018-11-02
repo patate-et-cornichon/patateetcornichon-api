@@ -140,6 +140,16 @@ class TestRecipeViewSet:
         for key, value in recipe_data.items():
             assert getattr(recipe, key) == value
 
+    def test_can_increment_view_counter_on_retrieving(self):
+        recipe = RecipeFactory.create(published=True)
+
+        client = APIClient()
+        response = client.get(reverse('recipe:recipe-detail', args=(recipe.slug, )))
+        assert response.status_code == status.HTTP_200_OK
+
+        recipe.refresh_from_db()
+        assert recipe.views == 1
+
     def test_cannot_create_a_new_recipe_when_non_staff(self):
         recipe_data = {
             'slug': 'super-recette',

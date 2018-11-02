@@ -107,6 +107,16 @@ class TestStoryViewSet:
         for key, value in story_data.items():
             assert getattr(story, key) == value
 
+    def test_can_increment_view_counter_on_retrieving(self):
+        story = StoryFactory.create(published=True)
+
+        client = APIClient()
+        response = client.get(reverse('story:story-detail', args=(story.slug, )))
+        assert response.status_code == status.HTTP_200_OK
+
+        story.refresh_from_db()
+        assert story.views == 1
+
     def test_cannot_create_a_new_story_when_non_staff(self):
         story_data = {
             'slug': 'devenir-zero-dechet',

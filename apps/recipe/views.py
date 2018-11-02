@@ -22,6 +22,13 @@ class RecipeViewSet(ModelViewSet):
     ordering_fields = ('created', 'views', '?',)
     pagination_class = StandardResultsSetPagination
 
+    def retrieve(self, request, *args, **kwargs):
+        """ Override the retrieve method in order to increments the view counter. """
+        instance = self.get_object()
+        instance.views += 1
+        instance.save()
+        return super().retrieve(request, *args, **kwargs)
+
     def get_permissions(self):
         """ Instantiates and returns the list of permissions that this view requires. """
         if self.action in ['retrieve', 'list']:
