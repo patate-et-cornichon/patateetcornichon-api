@@ -13,6 +13,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(__file__), '.media')
 @pytest.fixture(autouse=True)
 def setup():
     settings.MEDIA_ROOT = MEDIA_ROOT
+    settings.EMAIL_STAFF_CONTACT = 'test@test.com'
 
 
 @pytest.yield_fixture(scope='session', autouse=True)
