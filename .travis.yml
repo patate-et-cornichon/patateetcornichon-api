@@ -15,6 +15,7 @@ env:
 install:
   - pip install pipenv
   - pipenv install --dev
+  - pipenv install coveralls
 
 before_script:
   - psql -c 'create database travis_pec_api;' -U postgres
@@ -22,3 +23,6 @@ before_script:
 script:
   - make qa
   - make coverage
+
+after_success:
+  - coveralls
