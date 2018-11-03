@@ -27,9 +27,6 @@ class StoryIndex(AlgoliaIndex):
             'tags_list',
             'content',
         ],
-        'unretrievableAttributes': [
-            'content',
-        ],
         'attributesForFaceting': [
             'tags_list.slug',
         ],
