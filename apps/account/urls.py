@@ -7,7 +7,7 @@ from .views import UserViewSet
 
 
 router = DefaultRouter()
-router.register(r'', UserViewSet, base_name='user')
+router.register(r'', UserViewSet, basename='user')
 
 app_name = 'account'
 urlpatterns = [

@@ -7,7 +7,7 @@ from .views import CommentViewSet
 
 
 router = DefaultRouter()
-router.register(r'', CommentViewSet, base_name='comment')
+router.register(r'', CommentViewSet, basename='comment')
 
 app_name = 'comment'
 urlpatterns = [

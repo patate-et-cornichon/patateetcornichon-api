@@ -7,10 +7,10 @@ from apps.story.views import AuthorViewSet, StoryViewSet, TagViewSet, UploadImag
 
 
 router = DefaultRouter()
-router.register(r'authors', AuthorViewSet, base_name='author')
-router.register(r'tags', TagViewSet, base_name='tag')
-router.register(r'upload-image', UploadImageViewSet, base_name='upload_image')
-router.register(r'', StoryViewSet, base_name='story')
+router.register(r'authors', AuthorViewSet, basename='author')
+router.register(r'tags', TagViewSet, basename='tag')
+router.register(r'upload-image', UploadImageViewSet, basename='upload_image')
+router.register(r'', StoryViewSet, basename='story')
 
 app_name = 'story'
 urlpatterns = [
