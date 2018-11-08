@@ -99,6 +99,7 @@ DATABASES = {
 ALGOLIA = {
     'APPLICATION_ID': os.environ.get('ALGOLIASEARCH_APPLICATION_ID', 'notset'),
     'API_KEY': os.environ.get('ALGOLIASEARCH_API_KEY', 'notset'),
+    'AUTO_INDEXING': False,
 }
 
 # Password validation

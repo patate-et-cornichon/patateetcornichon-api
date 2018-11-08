@@ -1,3 +1,4 @@
+import algoliasearch_django
 from django.db import transaction
 from django.db.models import Q
 from django.utils.text import slugify
@@ -285,3 +286,11 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                 if tag is None:
                     tag = Tag.objects.create(slug=tag_slug, name=tag_name.lower())
                 instance.tags.add(tag)
+
+        self._update_index(instance)
+
+    def _update_index(self, instance):  # pragma: no cover
+        """ Check if Algolia is installed and update index. """
+        from django.conf import settings
+        if 'algoliasearch_django' in settings.INSTALLED_APPS:
+            algoliasearch_django.save_record(instance)
