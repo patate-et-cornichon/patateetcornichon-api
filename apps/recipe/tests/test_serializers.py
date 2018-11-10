@@ -29,7 +29,6 @@ class TestRecipeRetrieveSerializer:
 
         serializer = RecipeRetrieveSerializer()
 
-        assert 'medium' in serializer.get_secondary_picture_thumbs(recipe)
         assert 'large' in serializer.get_secondary_picture_thumbs(recipe)
 
 

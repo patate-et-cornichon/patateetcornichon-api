@@ -76,8 +76,7 @@ class Recipe(PostModel):
         """ Return cropped secondary picture with different sizes. """
         if self.secondary_picture:
             sizes = {
-                'medium': {'size': (650, 455), 'crop': True},
-                'large': {'size': (1090, 730), 'crop': True},
+                'large': {'size': (760, 525), 'crop': True},
             }
 
             thumbnailer = get_thumbnailer(self.secondary_picture)

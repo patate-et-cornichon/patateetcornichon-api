@@ -85,7 +85,6 @@ class TestRecipe:
             )
             recipe.save()
 
-        assert 'medium' in recipe.secondary_picture_thumbs.keys()
         assert 'large' in recipe.secondary_picture_thumbs.keys()
 
     def test_can_return_total_time(self):
