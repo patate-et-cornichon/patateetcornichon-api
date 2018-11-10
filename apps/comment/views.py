@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 
+from common.drf.mixins import CacheMixin
 from common.drf.pagination import StandardResultsSetPagination
 
 from .filters import CommentFilter
@@ -7,12 +8,13 @@ from .models import Comment
 from .serializers import CommentCreateUpdateSerializer, CommentRetrieveSerializer
 
 
-class CommentViewSet(ModelViewSet):
+class CommentViewSet(CacheMixin, ModelViewSet):
     """ Provide all methods for manage Comment. """
 
     queryset = Comment.objects.all()
     filterset_class = CommentFilter
     pagination_class = StandardResultsSetPagination
+    cache_timeout = 60 * 60 * 2  # 2 hours
 
     def get_queryset(self):
         """ Customize the queryset according to the current user. """

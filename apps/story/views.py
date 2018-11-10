@@ -4,6 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.mixins import ListModelMixin
 from rest_framework.parsers import MultiPartParser
@@ -13,13 +14,14 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet, ViewSet
 
 from apps.account.models import User
 from apps.account.serializers import UserSerializer
+from common.drf.mixins import CacheMixin
 from common.drf.pagination import StandardResultsSetPagination
 
 from .models import Story, Tag
 from .serializers import StoryCreateUpdateSerializer, StoryRetrieveSerializer, TagSerializer
 
 
-class StoryViewSet(ModelViewSet):
+class StoryViewSet(CacheMixin, ModelViewSet):
     """ Provide all methods for manage Story. """
 
     queryset = Story.objects.all()
@@ -28,16 +30,9 @@ class StoryViewSet(ModelViewSet):
     ordering_fields = ('created',)
     pagination_class = StandardResultsSetPagination
 
-    def retrieve(self, request, *args, **kwargs):
-        """ Override the retrieve method in order to increments the view counter. """
-        instance = self.get_object()
-        instance.views += 1
-        instance.save()
-        return super().retrieve(request, *args, **kwargs)
-
     def get_permissions(self):
         """Instantiates and returns the list of permissions that this view requires. """
-        if self.action in ['retrieve', 'list']:
+        if self.action in ['retrieve', 'list', 'add_view']:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAdminUser]
@@ -56,6 +51,14 @@ class StoryViewSet(ModelViewSet):
             return StoryCreateUpdateSerializer
         return StoryRetrieveSerializer
 
+    @action(detail=True, methods=['post'], url_name='add_view')
+    def add_view(self, request, slug=None):
+        """ Increments the recipe views. """
+        story = self.get_object()
+        story.views += 1
+        story.save()
+        return Response(status=status.HTTP_200_OK)
+
 
 class AuthorViewSet(ListModelMixin, GenericViewSet):
     """ Provide a list view for Author. """
@@ -64,7 +67,7 @@ class AuthorViewSet(ListModelMixin, GenericViewSet):
     serializer_class = UserSerializer
 
 
-class TagViewSet(ListModelMixin, GenericViewSet):
+class TagViewSet(CacheMixin, ListModelMixin, GenericViewSet):
     """ Provide a list view for Tag. """
 
     queryset = Tag.objects.all()

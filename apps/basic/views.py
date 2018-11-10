@@ -2,7 +2,9 @@ import requests
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
 from django.utils.html import strip_tags
+from django.views.decorators.cache import cache_page
 from requests.auth import HTTPBasicAuth
 from rest_framework import status
 from rest_framework.response import Response
@@ -44,6 +46,7 @@ class ContactView(APIView):
 class InstagramView(APIView):
     """ View used to interact with Instagram API. """
 
+    @method_decorator(cache_page(None))
     def get(self, request, format=None):
         """ Returns the Instagram media. """
         params = {

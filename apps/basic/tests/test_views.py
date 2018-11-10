@@ -1,7 +1,9 @@
 import json
 import unittest.mock
 
+import pytest
 from django.core import mail
+from django.core.cache import cache
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -46,6 +48,10 @@ class TestContactView:
 
 
 class TestInstagramView:
+    @pytest.yield_fixture(scope='function', autouse=True)
+    def setup(self):
+        cache.clear()
+
     @unittest.mock.patch('requests.get')
     def test_can_return_data_from_instagram_api(self, mocked_get):
         mocked_response = unittest.mock.Mock()

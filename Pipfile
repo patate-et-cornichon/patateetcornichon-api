@@ -24,6 +24,8 @@ algoliasearch-django = "*"
 easy-thumbnails = "*"
 sentry-sdk = "*"
 python-magic = "*"
+python-binary-memcached = "*"
+django-bmemcached = "*"
 
 
 [dev-packages]

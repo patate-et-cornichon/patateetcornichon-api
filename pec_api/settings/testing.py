@@ -44,6 +44,16 @@ sentry_sdk.init(
 )
 
 
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
+
+CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24  # One day
+
+
 # Files configuration
 
 # See https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-DEFAULT_FILE_STORAGE

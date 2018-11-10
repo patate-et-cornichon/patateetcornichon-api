@@ -3,6 +3,8 @@ import os
 from base64 import b64encode
 
 import pytest
+from django.core.cache import cache
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -17,6 +19,10 @@ FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
 
 @pytest.mark.django_db
 class TestRecipeViewSet:
+    @pytest.yield_fixture(scope='function', autouse=True)
+    def setup(self):
+        cache.clear()
+
     def test_can_access_published_recipes_only_when_non_staff_user(self):
         RecipeFactory.create(published=True)
         RecipeFactory.create(published=True)
@@ -140,11 +146,39 @@ class TestRecipeViewSet:
         for key, value in recipe_data.items():
             assert getattr(recipe, key) == value
 
-    def test_can_increment_view_counter_on_retrieving(self):
+    @override_settings(DEBUG=True)
+    def test_can_cache_results_data_from_detail(self):
+        from django.db import connection, reset_queries
+
         recipe = RecipeFactory.create(published=True)
 
         client = APIClient()
-        response = client.get(reverse('recipe:recipe-detail', args=(recipe.slug, )))
+        client.get(reverse('recipe:recipe-detail', args=(recipe.slug, )))
+        assert len(connection.queries) > 0
+
+        reset_queries()
+
+        client.get(reverse('recipe:recipe-detail', args=(recipe.slug, )))
+        assert len(connection.queries) == 0
+
+    @override_settings(DEBUG=True)
+    def test_can_cache_results_data_from_list(self):
+        from django.db import connection, reset_queries
+
+        client = APIClient()
+        client.get(reverse('recipe:recipe-list'))
+        assert len(connection.queries) > 0
+
+        reset_queries()
+
+        client.get(reverse('recipe:recipe-list'))
+        assert len(connection.queries) == 0
+
+    def test_can_increment_view_counter_on_add_view_call(self):
+        recipe = RecipeFactory.create(published=True)
+
+        client = APIClient()
+        response = client.post(reverse('recipe:recipe-add_view', args=(recipe.slug, )))
         assert response.status_code == status.HTTP_200_OK
 
         recipe.refresh_from_db()

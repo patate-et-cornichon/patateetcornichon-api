@@ -1,4 +1,5 @@
 import algoliasearch_django
+from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
 from django.utils.text import slugify
@@ -115,7 +116,11 @@ class StoryCreateUpdateSerializer(BaseStorySerializer):
                     tag = Tag.objects.create(slug=tag_slug, name=tag_name)
                 instance.tags.add(tag)
 
+        # Update index
         self._update_index(instance)
+
+        # Clear cache
+        cache.clear()
 
     def _update_index(self, instance):  # pragma: no cover
         """ Check if Algolia is installed and update index. """

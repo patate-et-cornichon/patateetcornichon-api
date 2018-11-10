@@ -1,9 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from common.drf.mixins import CacheMixin
 from common.drf.pagination import StandardResultsSetPagination
 
 from .models import Category, Ingredient, Recipe, Tag, Unit
@@ -12,7 +16,7 @@ from .serializers import (
     RecipeRetrieveSerializer, TagSerializer, UnitSerializer)
 
 
-class RecipeViewSet(ModelViewSet):
+class RecipeViewSet(CacheMixin, ModelViewSet):
     """ Provide all methods for manage Recipe. """
 
     queryset = Recipe.objects.all()
@@ -22,16 +26,9 @@ class RecipeViewSet(ModelViewSet):
     ordering_fields = ('created', 'views', '?',)
     pagination_class = StandardResultsSetPagination
 
-    def retrieve(self, request, *args, **kwargs):
-        """ Override the retrieve method in order to increments the view counter. """
-        instance = self.get_object()
-        instance.views += 1
-        instance.save()
-        return super().retrieve(request, *args, **kwargs)
-
     def get_permissions(self):
         """ Instantiates and returns the list of permissions that this view requires. """
-        if self.action in ['retrieve', 'list']:
+        if self.action in ['retrieve', 'list', 'add_view']:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAdminUser]
@@ -49,6 +46,14 @@ class RecipeViewSet(ModelViewSet):
         if self.action not in ['retrieve', 'list']:
             return RecipeCreateUpdateSerializer
         return RecipeRetrieveSerializer
+
+    @action(detail=True, methods=['post'], url_name='add_view')
+    def add_view(self, request, slug=None):
+        """ Increments the recipe views. """
+        recipe = self.get_object()
+        recipe.views += 1
+        recipe.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(ListModelMixin, GenericViewSet):

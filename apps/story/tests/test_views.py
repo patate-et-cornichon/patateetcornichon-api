@@ -3,7 +3,9 @@ import os
 from base64 import b64encode
 
 import pytest
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -19,6 +21,10 @@ FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
 
 @pytest.mark.django_db
 class TestStoryViewSet:
+    @pytest.yield_fixture(scope='function', autouse=True)
+    def setup(self):
+        cache.clear()
+
     def test_can_access_published_stories_only_when_non_staff_user(self):
         StoryFactory.create(published=True)
         StoryFactory.create(published=True)
@@ -107,11 +113,39 @@ class TestStoryViewSet:
         for key, value in story_data.items():
             assert getattr(story, key) == value
 
-    def test_can_increment_view_counter_on_retrieving(self):
+    @override_settings(DEBUG=True)
+    def test_can_cache_results_data_from_detail(self):
+        from django.db import connection, reset_queries
+
         story = StoryFactory.create(published=True)
 
         client = APIClient()
-        response = client.get(reverse('story:story-detail', args=(story.slug, )))
+        client.get(reverse('story:story-detail', args=(story.slug, )))
+        assert len(connection.queries) > 0
+
+        reset_queries()
+
+        client.get(reverse('story:story-detail', args=(story.slug, )))
+        assert len(connection.queries) == 0
+
+    @override_settings(DEBUG=True)
+    def test_can_cache_results_data_from_list(self):
+        from django.db import connection, reset_queries
+
+        client = APIClient()
+        client.get(reverse('story:story-list'))
+        assert len(connection.queries) > 0
+
+        reset_queries()
+
+        client.get(reverse('story:story-list'))
+        assert len(connection.queries) == 0
+
+    def test_can_increment_view_counter_on_add_view_call(self):
+        story = StoryFactory.create(published=True)
+
+        client = APIClient()
+        response = client.post(reverse('story:story-add_view', args=(story.slug, )))
         assert response.status_code == status.HTTP_200_OK
 
         story.refresh_from_db()
@@ -132,7 +166,7 @@ class TestStoryViewSet:
         client = APIClient()
         client.login(username=user_data['email'], password=user_data['password'])
         response = client.post(
-            reverse('recipe:recipe-list'),
+            reverse('story:story-list'),
             story_data,
             content_type='application/json',
         )
@@ -141,6 +175,22 @@ class TestStoryViewSet:
 
         story = Story.objects.filter(slug=story_data['slug']).first()
         assert story is None
+
+
+@pytest.mark.django_db
+class TestTagViewSet:
+    @override_settings(DEBUG=True)
+    def test_can_cache_results_data_from_list(self):
+        from django.db import connection, reset_queries
+
+        client = APIClient()
+        client.get(reverse('story:tag-list'))
+        assert len(connection.queries) > 0
+
+        reset_queries()
+
+        client.get(reverse('story:tag-list'))
+        assert len(connection.queries) == 0
 
 
 @pytest.mark.django_db
