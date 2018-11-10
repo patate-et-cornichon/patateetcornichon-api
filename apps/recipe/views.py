@@ -22,7 +22,10 @@ class RecipeViewSet(CacheMixin, ModelViewSet):
     queryset = Recipe.objects.all()
     lookup_field = 'slug'
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    filter_fields = ('categories__slug',)
+    filter_fields = {
+        'categories__slug': ['exact'],
+        'created': ['lte', 'gte', 'lt', 'gt'],
+    }
     ordering_fields = ('created', 'views', '?',)
     pagination_class = StandardResultsSetPagination
 
