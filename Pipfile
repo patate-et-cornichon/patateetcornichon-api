@@ -26,6 +26,7 @@ sentry-sdk = "*"
 python-magic = "*"
 python-binary-memcached = "*"
 django-bmemcached = "*"
+"beautifulsoup4" = "*"
 
 
 [dev-packages]
