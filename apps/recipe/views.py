@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from apps.recipe.filters import RecipeFilter
 from common.drf.mixins import CacheMixin
 from common.drf.pagination import StandardResultsSetPagination
 
@@ -22,10 +23,7 @@ class RecipeViewSet(CacheMixin, ModelViewSet):
     queryset = Recipe.objects.all()
     lookup_field = 'slug'
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    filter_fields = {
-        'categories__slug': ['exact'],
-        'created': ['lte', 'gte', 'lt', 'gt'],
-    }
+    filterset_class = RecipeFilter
     ordering_fields = ('created', 'views', '?',)
     pagination_class = StandardResultsSetPagination
 
