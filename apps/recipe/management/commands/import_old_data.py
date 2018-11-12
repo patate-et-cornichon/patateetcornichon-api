@@ -230,10 +230,13 @@ class Command(BaseCommand):
             )
             parent_comments = cur.fetchall()
             for parent_comment in parent_comments:
+                parent_content = BeautifulSoup(parent_comment[5], 'html.parser')
+                for br in parent_content.find_all('br'):
+                    br.replace_with('\n')
                 comment = Comment.objects.create(
                     commented_object=recipe,
                     is_valid=parent_comment[6],
-                    content=parent_comment[5],
+                    content=parent_content.get_text(),
                     created=parent_comment[3],
                     updated=parent_comment[4],
                 )
@@ -264,10 +267,13 @@ class Command(BaseCommand):
                 )
                 child_comments = cur.fetchall()
                 for child_comment in child_comments:
+                    child_content = BeautifulSoup(child_comment[5], 'html.parser')
+                    for br in child_content.find_all('br'):
+                        br.replace_with('\n')
                     child = Comment.objects.create(
                         commented_object=recipe,
                         is_valid=child_comment[6],
-                        content=child_comment[5],
+                        content=child_content.get_text(),
                         created=child_comment[3],
                         updated=child_comment[4],
                         parent=comment,
