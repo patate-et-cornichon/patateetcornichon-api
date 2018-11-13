@@ -11,3 +11,4 @@ omit =
     *manage.py*
     *apps.py*
     *index.py*
+    *sitemap.py*

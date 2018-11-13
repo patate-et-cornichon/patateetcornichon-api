@@ -76,6 +76,11 @@ EMAIL_STAFF_CONTACT = 'developer@patateetcornichon.com'
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRenderer',)  # noqa: F405 E501
 
 
+# Domain of Patate & Cornichon website
+
+PATATE_ET_CORNICHON_DOMAIN = 'testing.patateetcornichon.com'
+
+
 # Heroku Configuration
 
 django_heroku.settings(locals(), staticfiles=False, test_runner=False)

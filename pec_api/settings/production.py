@@ -81,6 +81,11 @@ EMAIL_STAFF_CONTACT = 'hello@patateetcornichon.com'
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRenderer',)  # noqa: F405 E501
 
 
+# Domain of Patate & Cornichon website
+
+PATATE_ET_CORNICHON_DOMAIN = 'patateetcornichon.com'
+
+
 # AWS Settings
 
 AWS_S3_CUSTOM_DOMAIN = 'cdn.patateetcornichon.com'
