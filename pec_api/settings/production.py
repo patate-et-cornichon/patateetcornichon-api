@@ -83,7 +83,7 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = ('rest_framework.renderers.JSONRend
 
 # AWS Settings
 
-AWS_S3_CUSTOM_DOMAIN = 'prod-cdn.patateetcornichon.com'
+AWS_S3_CUSTOM_DOMAIN = 'cdn.patateetcornichon.com'
 
 
 # Heroku Configuration
