@@ -11,4 +11,3 @@ omit =
     *manage.py*
     *apps.py*
     *index.py*
-    apps/recipe/management/commands/import_old_data.py
