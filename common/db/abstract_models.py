@@ -67,6 +67,9 @@ class PostModel(SlugModel, DatedModel):
             'medium': {'size': (418, 292), 'crop': True},
             'large': {'size': (760, 525), 'crop': True},
             'extra_large': {'size': (1152, 772), 'crop': True},
+            '1x1': {'size': (600, 600), 'crop': True},
+            '4x3': {'size': (600, 450), 'crop': True},
+            '16x9': {'size': (600, 338), 'crop': True},
         }
 
         thumbnailer = get_thumbnailer(self.main_picture)
