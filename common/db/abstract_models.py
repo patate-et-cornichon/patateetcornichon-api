@@ -79,4 +79,4 @@ class PostModel(SlugModel, DatedModel):
     def comments_count(self):
         """ Return the count of comments linked to the instance. """
         from apps.comment.models import Comment
-        return Comment.objects.filter(object_id=self.id).count()
+        return Comment.objects.filter(object_id=self.id, is_valid=True).count()
