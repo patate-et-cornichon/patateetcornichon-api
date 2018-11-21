@@ -72,7 +72,7 @@ THUMBNAIL_DEFAULT_STORAGE = 'pec_api.storage.MediaRootS3BotoStorage'
 # Email settings
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = 'Patate & Cornichon <noreply@testing.patateetcornichon.com>'
+DEFAULT_FROM_EMAIL = 'Patate & Cornichon <noreply@patateetcornichon.com>'
 EMAIL_STAFF_CONTACT = 'hello@patateetcornichon.com'
 
 
