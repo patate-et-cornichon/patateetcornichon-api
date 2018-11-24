@@ -37,7 +37,17 @@ class RecipeViewSet(CacheMixin, ModelViewSet):
 
     def get_queryset(self):
         """ Customize the queryset according to the current user. """
-        queryset = super().get_queryset()
+        queryset = (
+            super().get_queryset()
+            .prefetch_related(
+                'composition',
+                'composition__ingredients',
+                'composition__ingredients__ingredient',
+                'composition__ingredients__unit',
+                'categories',
+                'tags',
+            )
+        )
         if self.request.user.is_authenticated and self.request.user.is_staff:
             return queryset
         return queryset.filter(published=True)
