@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class RecipeConfig(AppConfig):
-    name = 'recipe'
+    label = 'recipe'
+    name = 'apps.recipe'

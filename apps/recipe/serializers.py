@@ -1,4 +1,3 @@
-import algoliasearch_django
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
@@ -6,6 +5,7 @@ from django.utils.text import slugify
 from rest_framework import serializers
 
 from common.drf.fields import Base64ImageField
+from common.index import save_record
 
 from .models import Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, Tag, Unit
 
@@ -20,6 +20,7 @@ class ChildCategorySerializer(serializers.ModelSerializer):
             'slug',
             'name',
         )
+
     read_only_fields = ('id',)
 
 
@@ -289,13 +290,7 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
                 instance.tags.add(tag)
 
         # Update index
-        self._update_index(instance)
+        save_record(instance)
 
-        # Clear cache
+        # Cache clear
         cache.clear()
-
-    def _update_index(self, instance):  # pragma: no cover
-        """ Check if Algolia is installed and update index. """
-        from django.conf import settings
-        if 'algoliasearch_django' in settings.INSTALLED_APPS:
-            algoliasearch_django.save_record(instance)

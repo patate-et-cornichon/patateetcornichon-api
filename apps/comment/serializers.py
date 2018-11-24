@@ -199,6 +199,7 @@ class CommentCreateUpdateSerializer(serializers.ModelSerializer):
         instance = super().save(**kwargs)
 
         if self.instance.parent is not None and self.instance.is_valid:
+            # Send an email to comment subscribers
             subject = 'Nouveau commentaire sur Patate & Cornichon'
             bcc = [email for email in self.instance.get_subscribers()]
 

@@ -1,4 +1,3 @@
-import algoliasearch_django
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Q
@@ -8,6 +7,7 @@ from rest_framework import serializers
 from apps.account.serializers import UserSerializer
 from apps.comment.models import Comment
 from common.drf.fields import Base64ImageField
+from common.index import save_record
 
 from .models import Story, Tag
 
@@ -117,13 +117,7 @@ class StoryCreateUpdateSerializer(BaseStorySerializer):
                 instance.tags.add(tag)
 
         # Update index
-        self._update_index(instance)
+        save_record(instance)
 
-        # Clear cache
+        # Cache clear
         cache.clear()
-
-    def _update_index(self, instance):  # pragma: no cover
-        """ Check if Algolia is installed and update index. """
-        from django.conf import settings
-        if 'algoliasearch_django' in settings.INSTALLED_APPS:
-            algoliasearch_django.save_record(instance)

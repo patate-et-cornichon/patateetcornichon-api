@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class BasicConfig(AppConfig):
-    name = 'basic'
+    label = 'basic'
+    name = 'apps.basic'
