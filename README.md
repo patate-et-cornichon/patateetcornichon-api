@@ -1,5 +1,5 @@
 # [Patate & Cornichon](https://patateetcornichon.com) - REST API
-[![Build Status](https://travis-ci.org/patate-et-cornichon/patateetcornichon-web.svg?branch=develop)](https://travis-ci.org/patate-et-cornichon/patateetcornichon-web) 
+[![Build Status](https://travis-ci.org/patate-et-cornichon/patateetcornichon-api.svg?branch=develop)](https://travis-ci.org/patate-et-cornichon/patateetcornichon-api) 
 [![Coverage Status](https://coveralls.io/repos/github/patate-et-cornichon/patateetcornichon-api/badge.svg?branch=develop)](https://coveralls.io/github/patate-et-cornichon/patateetcornichon-api?branch=develop)
 
 **Rest API used to interact with the [Patate & Cornichon web application](https://github.com/patate-et-cornichon/patateetcornichon-web).**
