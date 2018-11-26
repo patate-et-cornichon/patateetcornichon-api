@@ -29,11 +29,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#caches
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
 }
-
-CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24  # One day
 
 
 # Files configuration

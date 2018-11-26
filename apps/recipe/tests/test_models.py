@@ -5,7 +5,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms import model_to_dict
 
 from apps.recipe.models import Recipe
-from apps.recipe.tests.factories import RecipeCompositionFactory, RecipeFactory, TagFactory
+from apps.recipe.tests.factories import (
+    RecipeCompositionFactory, RecipeFactory, RecipeSelectionFactory, TagFactory)
 
 from .factories import CategoryFactory
 
@@ -93,3 +94,19 @@ class TestRecipe:
             cooking_time=30,
         )
         assert recipe.total_time == 50
+
+
+@pytest.mark.django_db
+class TestRecipeSelection:
+    def test_can_return_thumbnails(self):
+        selection = RecipeSelectionFactory.create()
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as f:
+            selection.picture = SimpleUploadedFile(
+                name='recipe.jpg',
+                content=f.read(),
+                content_type='image/jpeg'
+            )
+            selection.save()
+
+        assert 'large' in selection.picture_thumbs.keys()
+        assert 'extra_large' in selection.picture_thumbs.keys()

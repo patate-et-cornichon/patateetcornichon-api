@@ -6,8 +6,9 @@ from easy_thumbnails.files import get_thumbnailer
 
 from apps.comment.models import Comment
 from apps.recipe.files import (
-    recipe_main_picture_directory_path, recipe_secondary_picture_directory_path)
-from common.db.abstract_models import PostModel, SlugModel
+    recipe_main_picture_directory_path, recipe_secondary_picture_directory_path,
+    selection_picture_directory_path)
+from common.db.abstract_models import DatedModel, PostModel, PublishableModel, SlugModel
 
 
 class Recipe(PostModel):
@@ -155,3 +156,57 @@ class Unit(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RecipeSelection(PublishableModel, SlugModel, DatedModel):
+    """ A recipes selection is composed of multiple ordered recipes."""
+
+    # Title of the selection
+    title = models.CharField(max_length=255)
+
+    # Description of the selection
+    description = models.TextField()
+
+    # We have two types of image: a recipe illustration and an optional second illustration.
+    picture = models.ImageField(upload_to=selection_picture_directory_path)
+
+    # The selected recipe in the selection.
+    recipes = models.ManyToManyField(Recipe, through='SelectedRecipe')
+
+    # SEO field
+    meta_description = models.TextField()
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def picture_thumbs(self):
+        """ Return cropped picture with different sizes. """
+        sizes = {
+            'large': {'size': (760, 525), 'crop': True},
+            'extra_large': {'size': (1152, 772), 'crop': True},
+        }
+
+        thumbnailer = get_thumbnailer(self.picture)
+        return {
+            name: thumbnailer.get_thumbnail(value).url for
+            name, value in sizes.items()
+        }
+
+
+class SelectedRecipe(models.Model):
+    """ A selected recipe integrated in a ``RecipeSelection`` instance. """
+
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+    # A selected recipe has to be associated with a selection
+    selection = models.ForeignKey(RecipeSelection, on_delete=models.CASCADE)
+
+    # Selected recipes need to be ordered
+    order = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f'Selected Recipe: {self.recipe.full_title}'

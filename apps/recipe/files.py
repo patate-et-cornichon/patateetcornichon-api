@@ -16,3 +16,9 @@ def recipe_secondary_picture_directory_path(instance, filename):
     """
     extension = filename.split('.')[-1]
     return f'recipes/{instance.slug}-2.{extension}'
+
+
+def selection_picture_directory_path(instance, filename):
+    """ Assign a filename according to the instance slug. """
+    extension = filename.split('.')[-1]
+    return f'recipes/selections/{instance.slug}.{extension}'

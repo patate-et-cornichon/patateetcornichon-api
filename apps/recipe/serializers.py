@@ -7,7 +7,9 @@ from rest_framework import serializers
 from common.drf.fields import Base64ImageField
 from common.index import save_record
 
-from .models import Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, Tag, Unit
+from .models import (
+    Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, RecipeSelection,
+    SelectedRecipe, Tag, Unit)
 
 
 class ChildCategorySerializer(serializers.ModelSerializer):
@@ -159,9 +161,8 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeRetrieveSerializer(BaseRecipeSerializer):
-    """ This serializer is used to retrieve Recipe instances. """
+    """ This serializer is used to retrieve Recipe instance. """
 
-    main_picture_thumbs = serializers.SerializerMethodField()
     categories = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
 
@@ -171,14 +172,6 @@ class RecipeRetrieveSerializer(BaseRecipeSerializer):
             'main_picture_thumbs',
             'secondary_picture_thumbs',
         )
-
-    def get_main_picture_thumbs(self, obj):
-        """ Return the main picture large thumbnail. """
-        return obj.main_picture_thumbs
-
-    def get_secondary_picture_thumbs(self, obj):
-        """ Return the secondary picture large thumbnail. """
-        return obj.secondary_picture_thumbs
 
 
 class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
@@ -294,3 +287,139 @@ class RecipeCreateUpdateSerializer(BaseRecipeSerializer):
 
         # Cache clear
         cache.clear()
+
+
+class RecipeListSerializer(serializers.ModelSerializer):
+    """ This serializer is used to list Recipe instances. """
+
+    main_picture_thumbs = serializers.SerializerMethodField()
+    categories = CategorySerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'slug',
+            'published',
+            'created',
+            'updated',
+
+            # Titles
+            'full_title',
+
+            # Image,
+            'main_picture_thumbs',
+
+            # Comments count
+            'comments_count',
+
+            # Categories and tags
+            'categories',
+            'tags',
+        )
+
+    def get_main_picture_thumbs(self, obj):
+        """ Return the main picture large thumbnail. """
+        return obj.main_picture_thumbs
+
+
+class SelectedRecipeCreateSerializer(serializers.ModelSerializer):
+    """ This serializer is used to create SelectedRecipe instance. """
+
+    class Meta:
+        model = SelectedRecipe
+        fields = (
+            'recipe',
+            'order',
+        )
+
+
+class BaseRecipeSelectionSerializer(serializers.ModelSerializer):
+    """ This is the base serializer of RecipeSelection serializers. """
+
+    class Meta:
+        model = RecipeSelection
+        fields = (
+            'id',
+            'slug',
+            'published',
+            'created',
+            'updated',
+
+            # Title
+            'title',
+
+            # Selected recipes
+            'recipes',
+
+            # Content
+            'description',
+
+            # SEO
+            'meta_description',
+        )
+        read_only_fields = ('id', 'updated')
+
+
+class RecipeSelectionRetrieveSerializer(BaseRecipeSelectionSerializer):
+    """ This serializer is used to retrieve RecipeSelection instance. """
+
+    recipes = serializers.SerializerMethodField()
+
+    class Meta(BaseRecipeSelectionSerializer.Meta):
+        fields = BaseRecipeSelectionSerializer.Meta.fields + (
+            'picture_thumbs',
+        )
+
+    def get_recipes(self, obj):
+        serializer = RecipeListSerializer(
+            [
+                selected_recipe.recipe for selected_recipe in
+                obj.selectedrecipe_set.order_by('order').all()
+            ],
+            many=True,
+            read_only=True,
+        )
+        return serializer.data
+
+
+class RecipeSelectionCreateUpdateSerializer(BaseRecipeSelectionSerializer):
+    """ This serializer is used to create or update RecipeSelection instance. """
+
+    picture = Base64ImageField(max_length=None, write_only=True)
+    recipes = SelectedRecipeCreateSerializer(many=True, write_only=True)
+
+    default_error_messages = {
+        'recipes_required': 'At least one recipe is required.',
+    }
+
+    class Meta(BaseRecipeSelectionSerializer.Meta):
+        fields = BaseRecipeSelectionSerializer.Meta.fields + (
+            'picture',
+        )
+
+    def validate_recipes(self, value):  # pragma: no cover
+        """ At least one recipe is required. """
+        if not value:
+            return self.fail('recipes_required')
+        return value
+
+    @transaction.atomic
+    def save(self, **kwargs):
+        """ Override the default save method."""
+        recipes = self.validated_data.pop('recipes', None)
+
+        # Save the new recipe
+        instance = super().save(**kwargs)
+
+        # Assign recipes.
+        if recipes:
+            instance.recipes.clear()
+
+            for selected_recipe in recipes:
+                SelectedRecipe.objects.create(
+                    recipe=selected_recipe['recipe'],
+                    order=selected_recipe['order'],
+                    selection=instance,
+                )

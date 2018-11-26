@@ -4,32 +4,16 @@ from base64 import b64encode
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from apps.recipe.models import Recipe, RecipeIngredient
+from apps.recipe.models import Recipe, RecipeIngredient, RecipeSelection
 from apps.recipe.serializers import (
     RecipeCompositionSerializer, RecipeCreateUpdateSerializer, RecipeIngredientSerializer,
-    RecipeRetrieveSerializer)
+    RecipeSelectionCreateUpdateSerializer, RecipeSelectionRetrieveSerializer)
 from apps.recipe.tests.factories import (
-    CategoryFactory, RecipeFactory, RecipeIngredientFactory, TagFactory, UnitFactory)
+    CategoryFactory, RecipeFactory, RecipeIngredientFactory, RecipeSelectionFactory,
+    SelectedRecipeFactory, TagFactory, UnitFactory)
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
-
-
-@pytest.mark.django_db
-class TestRecipeRetrieveSerializer:
-    def test_can_return_secondary_picture(self):
-        recipe = RecipeFactory.create()
-        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as f:
-            recipe.secondary_picture = SimpleUploadedFile(
-                name='recipe.jpg',
-                content=f.read(),
-                content_type='image/jpeg'
-            )
-            recipe.save()
-
-        serializer = RecipeRetrieveSerializer()
-
-        assert 'large' in serializer.get_secondary_picture_thumbs(recipe)
 
 
 @pytest.mark.django_db
@@ -231,3 +215,78 @@ class TestRecipeCompositionSerializer:
         })
         assert not serializer.is_valid()
         assert 'ingredients' in serializer.errors
+
+
+@pytest.mark.django_db
+class TestRecipeSelectionRetrieveSerializer:
+    def test_can_return_recipes_respecting_order(self):
+        selection = RecipeSelectionFactory.create()
+        selected_recipe_1 = SelectedRecipeFactory(
+            order=1,
+            selection=selection,
+        )
+        selected_recipe_2 = SelectedRecipeFactory(
+            order=2,
+            selection=selection,
+        )
+
+        serializer = RecipeSelectionRetrieveSerializer(instance=selection)
+        recipes = serializer.data['recipes']
+        assert recipes[0]['id'] == str(selected_recipe_1.recipe.id)
+        assert recipes[1]['id'] == str(selected_recipe_2.recipe.id)
+
+
+@pytest.mark.django_db
+class TestRecipeSelectionCreateUpdateSerializer:
+    def test_cannot_create_a_selection_instance_if_no_recipe(self):
+        selection_data = {
+            'slug': 'super-selection',
+            'title': 'Noël',
+            'picture': SimpleUploadedFile(
+                name='recipe.jpg',
+                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
+                content_type='image/jpeg'
+            ),
+            'recipes': [],
+            'description': 'Hello world',
+            'meta_description': 'Recettes de crêpes vegan',
+        }
+
+        serializer = RecipeSelectionCreateUpdateSerializer(data=selection_data)
+        assert not serializer.is_valid()
+        assert 'recipes' in serializer.errors
+
+    def test_cannot_associate_related_recipes(self):
+        recipe_1 = RecipeFactory.create()
+        recipe_2 = RecipeFactory.create()
+        selection_data = {
+            'slug': 'super-selection',
+            'title': 'Noël',
+            'picture': SimpleUploadedFile(
+                name='recipe.jpg',
+                content=open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb').read(),
+                content_type='image/jpeg'
+            ),
+            'recipes': [
+                {
+                    'recipe': recipe_1.id,
+                    'order': 1,
+                },
+                {
+                    'recipe': recipe_2.id,
+                    'order': 2,
+                },
+            ],
+            'description': 'Hello world',
+            'meta_description': 'Recettes de crêpes vegan',
+        }
+
+        serializer = RecipeSelectionCreateUpdateSerializer(data=selection_data)
+        assert serializer.is_valid()
+
+        serializer.save()
+
+        selection = RecipeSelection.objects.filter(slug='super-selection').first()
+        assert selection is not None
+
+        assert list(selection.recipes.all()) == [recipe_2, recipe_1]

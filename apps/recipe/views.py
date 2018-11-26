@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
@@ -11,10 +12,8 @@ from apps.recipe.filters import RecipeFilter
 from common.drf.mixins import CacheMixin
 from common.drf.pagination import StandardResultsSetPagination
 
-from .models import Category, Ingredient, Recipe, Tag, Unit
-from .serializers import (
-    CategorySerializer, IngredientSerializer, RecipeCreateUpdateSerializer,
-    RecipeRetrieveSerializer, TagSerializer, UnitSerializer)
+from . import serializers
+from .models import Category, Ingredient, Recipe, RecipeSelection, SelectedRecipe, Tag, Unit
 
 
 class RecipeViewSet(CacheMixin, ModelViewSet):
@@ -40,14 +39,23 @@ class RecipeViewSet(CacheMixin, ModelViewSet):
         queryset = (
             super().get_queryset()
             .prefetch_related(
-                'composition',
-                'composition__ingredients',
-                'composition__ingredients__ingredient',
-                'composition__ingredients__unit',
                 'categories',
                 'tags',
             )
         )
+        # Prefetch related field if action is retrieve
+        if self.action == 'retrieve':
+            queryset = (
+                queryset
+                .prefetch_related(
+                    'composition',
+                    'composition__ingredients',
+                    'composition__ingredients__ingredient',
+                    'composition__ingredients__unit',
+                    'categories',
+                    'tags',
+                )
+            )
         if self.request.user.is_authenticated and self.request.user.is_staff:
             return queryset
         return queryset.filter(published=True)
@@ -55,8 +63,10 @@ class RecipeViewSet(CacheMixin, ModelViewSet):
     def get_serializer_class(self):
         """ Return a dedicated serializer according to the HTTP verb. """
         if self.action not in ['retrieve', 'list']:
-            return RecipeCreateUpdateSerializer
-        return RecipeRetrieveSerializer
+            return serializers.RecipeCreateUpdateSerializer
+        elif self.action == 'list':
+            return serializers.RecipeListSerializer
+        return serializers.RecipeRetrieveSerializer
 
     @action(detail=True, methods=['post'], url_name='add_view')
     def add_view(self, request, slug=None):
@@ -71,25 +81,73 @@ class CategoryViewSet(ListModelMixin, GenericViewSet):
     """ Provide a list view for Category. """
 
     queryset = Category.objects.filter(parent__isnull=True)
-    serializer_class = CategorySerializer
+    serializer_class = serializers.CategorySerializer
 
 
 class TagViewSet(ListModelMixin, GenericViewSet):
     """ Provide a list view for Tag. """
 
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = serializers.TagSerializer
 
 
 class IngredientViewSet(ListModelMixin, GenericViewSet):
     """ Provide a list view for Tag. """
 
     queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+    serializer_class = serializers.IngredientSerializer
 
 
 class UnitViewSet(ListModelMixin, GenericViewSet):
     """ Provide a list view for Tag. """
 
     queryset = Unit.objects.all()
-    serializer_class = UnitSerializer
+    serializer_class = serializers.UnitSerializer
+
+
+class RecipeSelectionViewSet(CacheMixin, ModelViewSet):
+    """ Provide all methods for manage RecipeSelection. """
+
+    queryset = RecipeSelection.objects.all()
+    lookup_field = 'slug'
+    pagination_class = StandardResultsSetPagination
+
+    def get_permissions(self):
+        """ Instantiates and returns the list of permissions that this view requires. """
+        if self.action in ['retrieve', 'list']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        """ Customize the queryset according to the current user. """
+        queryset = super().get_queryset()
+        selected_recipe_queryset = (
+            SelectedRecipe.objects
+            .select_related('recipe')
+            .prefetch_related(
+                'recipe',
+                'recipe__categories',
+                'recipe__tags',
+            )
+        )
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            return queryset.prefetch_related(
+                Prefetch(
+                    'selectedrecipe_set',
+                    queryset=selected_recipe_queryset,
+                ),
+            )
+        return queryset.filter(published=True).prefetch_related(
+            Prefetch(
+                'selectedrecipe_set',
+                queryset=selected_recipe_queryset.filter(recipe__published=True),
+            ),
+        )
+
+    def get_serializer_class(self):
+        """ Return a dedicated serializer according to the HTTP verb. """
+        if self.action not in ['retrieve', 'list']:
+            return serializers.RecipeSelectionCreateUpdateSerializer
+        return serializers.RecipeSelectionRetrieveSerializer

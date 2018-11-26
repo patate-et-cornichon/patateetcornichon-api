@@ -27,14 +27,20 @@ class SlugModel(models.Model):
         abstract = True
 
 
-class PostModel(SlugModel, DatedModel):
+class PublishableModel(models.Model):
+    """ Represents an abstract model used to add a published field. """
+
+    published = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+class PostModel(PublishableModel, SlugModel, DatedModel):
     """ Represents an abstract model used to represent common post attributes. """
 
     # Custom ID with an UUID instead of the default one
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    # We store the fact thatthe post can be published or not
-    published = models.BooleanField(default=False)
 
     # We store post titles with a main title and sub title. The full title can not
     # be only the concatenation of the two fields because we want to customize it as we want.

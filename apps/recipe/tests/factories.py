@@ -1,7 +1,9 @@
 import factory
 from faker import Factory
 
-from ..models import Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, Tag, Unit
+from ..models import (
+    Category, Ingredient, Recipe, RecipeComposition, RecipeIngredient, RecipeSelection,
+    SelectedRecipe, Tag, Unit)
 
 
 fake = Factory.create()
@@ -112,3 +114,38 @@ class RecipeFactory(factory.django.DjangoModelFactory):
         if extracted:
             for ingredient in extracted:
                 self.ingredients.add(ingredient)
+
+
+class RecipeSelectionFactory(factory.django.DjangoModelFactory):
+    """ Factory class for the ``RecipeSelection`` model. """
+
+    slug = factory.LazyAttribute(lambda _: fake.slug())
+    published = True
+    title = fake.name()
+    picture = factory.django.ImageField()
+    recipes = factory.SubFactory(RecipeFactory)
+    description = fake.text()
+    meta_description = fake.text()
+
+    class Meta:
+        model = RecipeSelection
+
+    @factory.post_generation
+    def recipes(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for selected_recipe in extracted:
+                self.recipes.add(selected_recipe)
+
+
+class SelectedRecipeFactory(factory.django.DjangoModelFactory):
+    """ Factory class for the ``SelectedRecipe`` model. """
+
+    recipe = factory.SubFactory(RecipeFactory)
+    selection = factory.SubFactory(RecipeSelectionFactory)
+    order = 0
+
+    class Meta:
+        model = SelectedRecipe

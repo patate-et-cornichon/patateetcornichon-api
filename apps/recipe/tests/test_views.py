@@ -10,8 +10,8 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from apps.account.models import User
-from apps.recipe.models import Ingredient, Recipe
-from apps.recipe.tests.factories import CategoryFactory, RecipeFactory
+from apps.recipe.models import Ingredient, Recipe, RecipeSelection
+from apps.recipe.tests.factories import CategoryFactory, RecipeFactory, RecipeSelectionFactory
 
 
 FIXTURE_ROOT = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -218,3 +218,81 @@ class TestCategoryViewSet:
         response = client.get(reverse('recipe:category-list'))
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
+
+
+@pytest.mark.django_db
+class TestRecipeSelectionViewSet:
+    @pytest.yield_fixture(scope='function', autouse=True)
+    def setup(self):
+        cache.clear()
+
+    def test_cannot_access_published_selections_only_when_non_staff_user(self):
+        RecipeSelectionFactory.create(published=True)
+        RecipeSelectionFactory.create(published=True)
+        RecipeSelectionFactory.create(published=False)
+
+        client = APIClient()
+        response = client.get(reverse('recipe:selection-list'))
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['results']) == 2
+
+    def test_can_access_all_selections_when_staff_user(self):
+        RecipeSelectionFactory.create(published=True)
+        RecipeSelectionFactory.create(published=True)
+        RecipeSelectionFactory.create(published=False)
+
+        user_data = {
+            'email': 'test@test.com',
+            'password': 'test',
+            'first_name': 'Toto',
+        }
+        User.objects.create_superuser(**user_data)
+
+        client = APIClient()
+        client.login(username=user_data['email'], password=user_data['password'])
+        response = client.get(reverse('recipe:selection-list'))
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data['results']) == 3
+
+    def test_can_create_a_new_selection_when_staff_user(self):
+        recipe_1 = RecipeFactory.create(published=True)
+        recipe_2 = RecipeFactory.create(published=True)
+
+        with open(os.path.join(FIXTURE_ROOT, 'recipe.jpg'), 'rb') as picture:
+            selection_data = {
+                'slug': 'super-selection',
+                'title': 'Noël',
+                'picture': b64encode(picture.read()).decode('utf-8'),
+                'recipes': [
+                    {
+                        'recipe': str(recipe_1.id),
+                        'order': 1,
+                    },
+                    {
+                        'recipe': str(recipe_2.id),
+                        'order': 2,
+                    },
+                ],
+                'description': 'Hello world',
+                'meta_description': 'Recettes de crêpes vegan',
+            }
+
+            user_data = {
+                'email': 'test@test.com',
+                'password': 'test',
+                'first_name': 'Toto',
+            }
+            User.objects.create_superuser(**user_data)
+
+            client = APIClient()
+            client.login(username=user_data['email'], password=user_data['password'])
+            response = client.post(
+                reverse('recipe:selection-list'),
+                data=json.dumps(selection_data),
+                content_type='application/json',
+            )
+            assert response.status_code == status.HTTP_201_CREATED
+
+            selection = RecipeSelection.objects.filter(slug=selection_data['slug']).first()
+
+            assert selection is not None
