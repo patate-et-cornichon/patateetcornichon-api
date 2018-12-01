@@ -17,6 +17,7 @@ class RecipeFilter(filters.FilterSet):
     class Meta:
         model = Recipe
         fields = {
+            'full_title': ['startswith', 'istartswith', 'contains', 'icontains'],
             'slug': ['exact'],
             'categories__slug': ['exact'],
             'created': ['lte', 'gte', 'lt', 'gt'],
