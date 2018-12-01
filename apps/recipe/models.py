@@ -186,6 +186,7 @@ class RecipeSelection(PublishableModel, SlugModel, DatedModel):
     def picture_thumbs(self):
         """ Return cropped picture with different sizes. """
         sizes = {
+            'mini': {'size': (80, 50), 'crop': True},
             'large': {'size': (760, 525), 'crop': True},
             'extra_large': {'size': (1152, 772), 'crop': True},
         }
