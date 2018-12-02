@@ -423,3 +423,6 @@ class RecipeSelectionCreateUpdateSerializer(BaseRecipeSelectionSerializer):
                     order=selected_recipe['order'],
                     selection=instance,
                 )
+
+        # Cache clear
+        cache.clear()
