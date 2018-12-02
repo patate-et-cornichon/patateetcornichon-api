@@ -306,6 +306,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
             'updated',
 
             # Titles
+            'title',
+            'sub_title',
             'full_title',
 
             # Image,
