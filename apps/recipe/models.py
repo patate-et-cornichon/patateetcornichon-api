@@ -177,7 +177,7 @@ class RecipeSelection(PublishableModel, SlugModel, DatedModel):
     meta_description = models.TextField()
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('-created',)
 
     def __str__(self):
         return self.title

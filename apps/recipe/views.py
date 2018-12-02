@@ -110,6 +110,8 @@ class RecipeSelectionViewSet(CacheMixin, ModelViewSet):
 
     queryset = RecipeSelection.objects.all()
     lookup_field = 'slug'
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('created',)
     pagination_class = StandardResultsSetPagination
 
     def get_permissions(self):
