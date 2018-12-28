@@ -12,3 +12,4 @@ omit =
     *apps.py*
     *index.py*
     *sitemap.py*
+    *feed.py*

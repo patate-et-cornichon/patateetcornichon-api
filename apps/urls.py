@@ -6,7 +6,9 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 from apps.recipe.sitemap import RecipeSitemap
 from apps.story.sitemap import StorySitemap
-from apps.views import MainView
+
+from .feed import LatestPostsFeed
+from .views import MainView
 
 
 sitemaps = {
@@ -42,4 +44,7 @@ urlpatterns = [
         {'sitemaps': sitemaps},
         name='django.contrib.sitemaps.views.sitemap',
     ),
+
+    # Feed
+    path('feed/', LatestPostsFeed()),
 ]
