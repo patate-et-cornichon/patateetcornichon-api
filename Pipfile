@@ -1,11 +1,9 @@
 [[source]]
-
 url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
 [packages]
-
 django = "*"
 django-heroku = "*"
 djangorestframework = "*"
@@ -17,7 +15,6 @@ requests = "*"
 pillow = "*"
 django-filter = "*"
 django-cors-headers = "*"
-"psycopg2" = "*"
 gunicorn = "*"
 algoliasearch-django = "*"
 easy-thumbnails = "*"
@@ -25,10 +22,9 @@ sentry-sdk = "*"
 python-magic = "*"
 python-binary-memcached = "*"
 django-bmemcached = "*"
-
+psycopg2 = "*"
 
 [dev-packages]
-
 pytest = "*"
 pytest-django = "*"
 pytest-cov = "*"
@@ -40,12 +36,8 @@ ipython = "*"
 factory-boy = "*"
 faker = "*"
 
-
 [requires]
-
 python_version = "3.7"
 
-
 [pipenv]
-
 keep_outdated = true
