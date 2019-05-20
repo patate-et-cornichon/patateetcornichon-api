@@ -28,9 +28,9 @@ SECURE_SSL_REDIRECT = True
 # CORS Configuration
 
 CORS_ORIGIN_WHITELIST = (
-    'patateetcornichon.com',
-    'prod.patateetcornichon.com',
-    'admin.patateetcornichon.com',
+    'https://patateetcornichon.com',
+    'https://prod.patateetcornichon.com',
+    'https://admin.patateetcornichon.com',
 )
 
 
