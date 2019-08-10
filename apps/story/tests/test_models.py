@@ -3,6 +3,8 @@ import os
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.forms import model_to_dict
+from django.utils.html import strip_tags
+from django.utils.text import Truncator
 
 from apps.account.models import User
 from apps.story.tests.factories import StoryFactory
@@ -67,3 +69,8 @@ class TestStory:
             model_to_dict(tag, fields=['slug', 'name'])
             for tag in tags
         ]
+
+    def test_can_return_content_preview(self):
+        story = StoryFactory.create()
+
+        assert story.content_preview == Truncator(strip_tags(story.content_preview)).chars(300)

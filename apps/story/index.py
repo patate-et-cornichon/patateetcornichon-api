@@ -19,13 +19,13 @@ class StoryIndex(AlgoliaIndex):
         'created',
         'comments_count',
         'tags_list',
-        'content',
+        'content_preview',
     )
     settings = {
         'searchableAttributes': [
             'full_title',
             'tags_list',
-            'content',
+            'content_preview',
         ],
         'attributesForFaceting': [
             'tags_list.slug',

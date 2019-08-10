@@ -26,7 +26,7 @@ class StoryFactory(factory.django.DjangoModelFactory):
     sub_title = fake.name()
     full_title = factory.LazyAttribute(lambda _: fake.name())
     main_picture = factory.django.ImageField()
-    content = fake.text()
+    content = fake.text(max_nb_chars=500)
     tags = factory.SubFactory(TagFactory)
     meta_description = fake.text()
 

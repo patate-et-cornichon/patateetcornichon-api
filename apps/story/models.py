@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.forms import model_to_dict
+from django.utils.html import strip_tags
+from django.utils.text import Truncator
 
 from apps.comment.models import Comment
 from apps.story.files import story_main_picture_directory_path
@@ -31,6 +33,12 @@ class Story(PostModel):
             model_to_dict(tag, fields=['slug', 'name'])
             for tag in self.tags.all()
         ]
+
+    @property
+    def content_preview(self):
+        """ Return a content preview of the HTML content """
+        content_without_html = strip_tags(self.content)
+        return Truncator(content_without_html).chars(300)
 
 
 class Tag(SlugModel):
